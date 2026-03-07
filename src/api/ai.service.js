@@ -7,13 +7,14 @@ const api = axios.create({
 
 const aiService = {
   /**
-   * Ask a question with full conversation history for multi-turn context.
+   * Ask a question with difficulty and full conversation history for multi-turn context.
    * @param {string} question - The current user question.
+   * @param {string} difficulty - Proficiency level (beginner, intermediate, advanced).
    * @param {Array<{role: string, content: string|object}>} conversationHistory - Prior chat turns.
    */
-  askQuestion: async (question, conversationHistory = []) => {
+  askQuestion: async (question, difficulty = 'intermediate', conversationHistory = []) => {
     try {
-      const response = await api.post('/ai/ask', { question, conversationHistory });
+      const response = await api.post('/ai/ask', { question, difficulty, conversationHistory });
       return response;
     } catch (error) {
       console.error('AI Service Error:', error);

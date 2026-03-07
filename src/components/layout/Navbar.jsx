@@ -1,8 +1,8 @@
 import {
-    SignedIn,
-    SignedOut,
-    SignInButton,
-    UserButton
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  UserButton
 } from "@clerk/clerk-react";
 import { Brain, Menu } from "lucide-react";
 import { useEffect, useState } from "react";
