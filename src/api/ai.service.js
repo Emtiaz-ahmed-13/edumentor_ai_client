@@ -8,9 +8,9 @@ const api = axios.create({
 
 const aiService = {
 
-  askQuestion: async (question) => {
+  askQuestion: async (question, difficulty = 'intermediate') => {
     try {
-      const response = await api.post('/ai/ask', { question });
+      const response = await api.post('/ai/ask', { question, difficulty });
       return response;
     } catch (error) {
       console.error('AI Service Error:', error);

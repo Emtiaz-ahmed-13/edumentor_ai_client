@@ -1,8 +1,8 @@
 import { createBrowserRouter } from "react-router";
 import App from "../App";
 import AskAI from "../pages/AskAI";
-import Home from "../pages/Home";
 import ConceptSimplifier from "../pages/ConceptSimplifier";
+import Home from "../pages/Home";
 
 export const router = createBrowserRouter([
   {
