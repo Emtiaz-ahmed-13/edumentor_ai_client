@@ -5,12 +5,15 @@ const api = axios.create({
   timeout: 60000,
 });
 
-
 const aiService = {
-
-  askQuestion: async (question) => {
+  /**
+   * Ask a question with full conversation history for multi-turn context.
+   * @param {string} question - The current user question.
+   * @param {Array<{role: string, content: string|object}>} conversationHistory - Prior chat turns.
+   */
+  askQuestion: async (question, conversationHistory = []) => {
     try {
-      const response = await api.post('/ai/ask', { question });
+      const response = await api.post('/ai/ask', { question, conversationHistory });
       return response;
     } catch (error) {
       console.error('AI Service Error:', error);

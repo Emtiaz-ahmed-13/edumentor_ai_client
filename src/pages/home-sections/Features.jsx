@@ -17,8 +17,9 @@ import {
     Timer,
     Volume2
 } from "lucide-react";
+import { Link } from "react-router";
 
-const FeatureCard = ({ title, description, icon, color, className = "" }) => (
+const FeatureCard = ({ title, description, icon, color, href, className = "" }) => (
   <div className={`group relative overflow-hidden rounded-3xl border border-zinc-200 bg-white p-8 transition-all hover:shadow-2xl hover:shadow-zinc-200/50 hover:-translate-y-1 ${className}`}>
     {/* Subtle gradient background on hover */}
     <div className={`absolute inset-0 -z-10 bg-gradient-to-br opacity-0 transition-opacity duration-500 group-hover:opacity-5 ${color}`} />
@@ -31,6 +32,14 @@ const FeatureCard = ({ title, description, icon, color, className = "" }) => (
       <p className="text-sm leading-relaxed text-zinc-500 transition-colors">
         {description}
       </p>
+      {href && (
+        <Link
+          to={href}
+          className="mt-5 inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline transition-all"
+        >
+          Try it →
+        </Link>
+      )}
     </div>
 
     {/* Decorative corner element */}
@@ -48,10 +57,11 @@ export default function Features() {
       features: [
         {
           title: "Adaptive Questioning",
-          description: "Structured, level-appropriate explanations for any academic query using advanced language models.",
+          description: "Ask any question and get logical, step-by-step breakdowns with numbered reasoning — just like a real tutor.",
           icon: <MessageSquare className="h-6 w-6 text-blue-600" />,
           color: "from-blue-500 to-transparent",
-          size: "lg"
+          size: "lg",
+          href: "/ask-ai"
         },
         {
           title: "Intelligent Mentor",
@@ -62,17 +72,19 @@ export default function Features() {
         },
         {
           title: "Contextual Memory",
-          description: "Deep learning with a system that remembers your history.",
+          description: "Full conversation history sent on every request — ask follow-up questions and the AI remembers exactly what you discussed.",
           icon: <BrainCircuit className="h-6 w-6 text-cyan-600" />,
           color: "from-cyan-500 to-transparent",
-          size: "sm"
+          size: "sm",
+          href: "/ask-ai"
         },
         {
           title: "Concept Simplifier",
           description: "Abstract theories made simple through practical analogies.",
           icon: <Lightbulb className="h-6 w-6 text-amber-600" />,
           color: "from-amber-500 to-transparent",
-          size: "md"
+          size: "md",
+          href: "/concept-simplifier"
         }
       ]
     },
