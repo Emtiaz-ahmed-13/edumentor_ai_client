@@ -7,42 +7,33 @@
 
 import axios from 'axios';
 
-// Create axios instance with base URL - FIXED: Added /v1 to match server
-const API_BASE_URL = 'http://localhost:5001/api/v1';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api/v1';
 
 // Create axios instance
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
-    'Content-Type': 'application/json'
-  }
+    'Content-Type': 'application/json',
+  },
 });
 
-// Request interceptor to add JWT token to every request
+// Request interceptor to attach JWT if present
 api.interceptors.request.use(
   (config) => {
-    // Get token from localStorage
     const token = localStorage.getItem('token');
-
-    // If token exists, add it to Authorization header
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-// Response interceptor for error handling
+// Response interceptor for 401 handling
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Handle token expiration
-    if (error.response && error.response.status === 401) {
-      // Clear token and redirect to login if needed
+    if (error.response?.status === 401) {
       localStorage.removeItem('token');
     }
     return Promise.reject(error);
@@ -50,50 +41,49 @@ api.interceptors.response.use(
 );
 
 /**
- * Simplify a concept using Gemini AI
- * @param {Object} data - { topic: string, difficultyLevel: string }
- * @returns {Promise} - AI response with explanation
+ * Simplify a concept using Gemini AI and save to DB
+ * @param {{ topic: string, difficultyLevel: string }} data
+ * @returns {Promise<Object>} AI result object
  */
 export const simplifyConcept = async (data) => {
   try {
-    // Transform frontend data to match backend API format
-    const requestData = {
+    const response = await api.post('/ai/ask', {
       question: data.topic,
-      difficulty: data.difficultyLevel
-    };
-    
-    const response = await api.post('/ai/ask', requestData);
-    return response.data.data; // Return the AI response data
+      difficulty: data.difficultyLevel,
+    });
+    return response.data.data;
   } catch (error) {
-    // Handle and throw error with meaningful message
-    const message = error.response?.data?.message || error.response?.data?.msg || 'Failed to simplify concept';
+    const message =
+      error.response?.data?.message ||
+      error.response?.data?.msg ||
+      'Failed to simplify concept. Please check your connection and try again.';
     throw new Error(message);
   }
 };
 
 /**
- * Get user's concept history
- * @returns {Promise} - Array of concept documents
+ * Get user's concept history (newest first, max 20)
+ * @returns {Promise<Array>} Array of concept documents
  */
 export const getHistory = async () => {
   try {
     const response = await api.get('/concepts/history');
-    return response.data.data || response.data;
+    return response.data.data || [];
   } catch (error) {
-    // Return empty array if no history endpoint exists
+    console.error('Failed to load history:', error.message);
     return [];
   }
 };
 
 /**
- * Get a specific concept by ID
- * @param {string} id - Concept ID
- * @returns {Promise} - Concept document
+ * Get a single concept by ID
+ * @param {string} id - MongoDB ObjectId
+ * @returns {Promise<Object>} Concept document
  */
 export const getConceptById = async (id) => {
   try {
     const response = await api.get(`/concepts/${id}`);
-    return response.data.data || response.data;
+    return response.data.data;
   } catch (error) {
     const message = error.response?.data?.message || 'Failed to fetch concept';
     throw new Error(message);
@@ -102,18 +92,18 @@ export const getConceptById = async (id) => {
 
 /**
  * Delete a concept by ID
- * @param {string} id - Concept ID
- * @returns {Promise} - Success message
+ * @param {string} id - MongoDB ObjectId
+ * @returns {Promise<void>}
  */
 export const deleteConcept = async (id) => {
   try {
     const response = await api.delete(`/concepts/${id}`);
     return response.data;
   } catch (error) {
-    const message = error.response?.data?.message || 'Failed to delete concept';
+    const message =
+      error.response?.data?.message || 'Failed to delete concept';
     throw new Error(message);
   }
 };
 
 export default api;
-
