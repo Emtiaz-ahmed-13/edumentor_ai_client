@@ -14,7 +14,7 @@ export default function Hero() {
       <div className="container mx-auto px-4 text-center">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-muted/50 text-muted-foreground text-sm font-medium mb-8 border border-border pb-1">
           <Sparkles className="w-4 h-4 text-primary" />
-          <span>The All-In-One AI Core Tutoring System</span>
+          <span>Step-by-Step AI Breakdowns · Follow-up Questions · Powered by Gemini</span>
         </div>
         
         <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-8 text-foreground max-w-5xl mx-auto leading-[1.1]">
@@ -22,20 +22,20 @@ export default function Hero() {
         </h1>
         
         <p className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-3xl mx-auto leading-relaxed">
-          From adaptive AI question answering and smart document summaries to intelligent evaluation and personalized study modes, experience the future of digital learning.
+          Ask any question and receive logical, step-by-step breakdowns with full conversation memory — so you can ask follow-ups just like talking to a real tutor.
         </p>
         
         <div className="flex justify-center gap-4 flex-col sm:flex-row">
           <Button size="lg" className="h-14 px-8 text-lg rounded-full shadow-lg shadow-primary/25" asChild>
-            <Link to="/signup">
-              Start Your Journey
+            <Link to="/ask-ai">
+              Ask EduMentor AI
               <ArrowRight className="ml-2 w-5 h-5" />
             </Link>
           </Button>
           <Button size="lg" variant="outline" className="h-14 px-8 text-lg rounded-full" asChild>
-            <Link to="/demo">
+            <a href="#features">
               Explore Features
-            </Link>
+            </a>
           </Button>
         </div>
 
