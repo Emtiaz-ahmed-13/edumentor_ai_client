@@ -30,6 +30,16 @@ const aiService = {
       console.error('Health Check Error:', error);
       throw error;
     }
+  },
+
+  analyzeCode: async (code, language = 'javascript', difficulty = 'intermediate') => {
+    try {
+      const response = await api.post('/ai/analyze-code', { code, language, difficulty });
+      return response;
+    } catch (error) {
+      console.error('Code Analysis Error:', error);
+      throw error;
+    }
   }
 };
 
