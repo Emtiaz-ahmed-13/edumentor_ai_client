@@ -5,12 +5,16 @@ const api = axios.create({
   timeout: 60000,
 });
 
-
 const aiService = {
-
-  askQuestion: async (question) => {
+  /**
+   * Ask a question with difficulty and full conversation history for multi-turn context.
+   * @param {string} question - The current user question.
+   * @param {string} difficulty - Proficiency level (beginner, intermediate, advanced).
+   * @param {Array<{role: string, content: string|object}>} conversationHistory - Prior chat turns.
+   */
+  askQuestion: async (question, difficulty = 'intermediate', conversationHistory = []) => {
     try {
-      const response = await api.post('/ai/ask', { question });
+      const response = await api.post('/ai/ask', { question, difficulty, conversationHistory });
       return response;
     } catch (error) {
       console.error('AI Service Error:', error);
@@ -20,10 +24,21 @@ const aiService = {
 
   checkHealth: async () => {
     try {
-      const response = await api.get('/');
-      return response;
+      // Root check
+      const response = await axios.get((import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001/api/v1').replace('/api/v1', ''));
+      return response.data;
     } catch (error) {
       console.error('Health Check Error:', error);
+      throw error;
+    }
+  },
+
+  analyzeCode: async (code, language = 'javascript', difficulty = 'intermediate') => {
+    try {
+      const response = await api.post('/ai/analyze-code', { code, language, difficulty });
+      return response;
+    } catch (error) {
+      console.error('Code Analysis Error:', error);
       throw error;
     }
   }

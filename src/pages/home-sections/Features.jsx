@@ -17,20 +17,29 @@ import {
     Timer,
     Volume2
 } from "lucide-react";
+import { Link } from "react-router";
 
-const FeatureCard = ({ title, description, icon, color, className = "" }) => (
-  <div className={`group relative overflow-hidden rounded-3xl border border-zinc-200 bg-white p-8 transition-all hover:shadow-2xl hover:shadow-zinc-200/50 hover:-translate-y-1 ${className}`}>
+const FeatureCard = ({ title, description, icon, color, href, className = "" }) => (
+  <div className={`group relative overflow-hidden rounded-2xl border border-zinc-200 bg-white p-5 transition-all hover:shadow-xl hover:shadow-zinc-200/50 hover:-translate-y-0.5 ${className}`}>
     {/* Subtle gradient background on hover */}
     <div className={`absolute inset-0 -z-10 bg-gradient-to-br opacity-0 transition-opacity duration-500 group-hover:opacity-5 ${color}`} />
     
     <div className="relative z-10">
-      <div className={`mb-6 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-zinc-50 border border-zinc-100 transition-all duration-500 group-hover:scale-110 group-hover:bg-white group-hover:shadow-lg`}>
+      <div className={`mb-3 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-50 border border-zinc-100 transition-all duration-500 group-hover:scale-110 group-hover:bg-white group-hover:shadow-lg`}>
         {icon}
       </div>
-      <h3 className="mb-3 text-xl font-bold text-zinc-900 transition-colors">{title}</h3>
+      <h3 className="mb-2 text-base font-bold text-zinc-900 transition-colors">{title}</h3>
       <p className="text-sm leading-relaxed text-zinc-500 transition-colors">
         {description}
       </p>
+      {href && (
+        <Link
+          to={href}
+          className="mt-5 inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline transition-all"
+        >
+          Try it →
+        </Link>
+      )}
     </div>
 
     {/* Decorative corner element */}
@@ -48,10 +57,11 @@ export default function Features() {
       features: [
         {
           title: "Adaptive Questioning",
-          description: "Structured, level-appropriate explanations for any academic query using advanced language models.",
+          description: "Ask any question and get logical, step-by-step breakdowns with numbered reasoning — just like a real tutor.",
           icon: <MessageSquare className="h-6 w-6 text-blue-600" />,
           color: "from-blue-500 to-transparent",
-          size: "lg"
+          size: "lg",
+          href: "/ask-ai"
         },
         {
           title: "Intelligent Mentor",
@@ -62,17 +72,19 @@ export default function Features() {
         },
         {
           title: "Contextual Memory",
-          description: "Deep learning with a system that remembers your history.",
+          description: "Full conversation history sent on every request — ask follow-up questions and the AI remembers exactly what you discussed.",
           icon: <BrainCircuit className="h-6 w-6 text-cyan-600" />,
           color: "from-cyan-500 to-transparent",
-          size: "sm"
+          size: "sm",
+          href: "/ask-ai"
         },
         {
           title: "Concept Simplifier",
           description: "Abstract theories made simple through practical analogies.",
           icon: <Lightbulb className="h-6 w-6 text-amber-600" />,
           color: "from-amber-500 to-transparent",
-          size: "md"
+          size: "md",
+          href: "/concept-simplifier"
         }
       ]
     },
@@ -175,10 +187,10 @@ export default function Features() {
   ];
 
   return (
-    <section id="features" className="bg-white py-32">
-      <div className="container mx-auto px-4">
-        <div className="mb-24 text-center">
-          <h2 className="mb-6 text-4xl font-extrabold tracking-tight text-zinc-900 md:text-6xl">
+    <section id="features" className="bg-white py-16">
+      <div className="container mx-auto px-4 max-w-6xl">
+        <div className="mb-10 text-center">
+          <h2 className="mb-4 text-3xl font-extrabold tracking-tight text-zinc-900 md:text-5xl">
             The Future of <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600">Learning Engineering</span>
           </h2>
           <p className="mx-auto max-w-2xl text-lg text-zinc-500">
@@ -186,9 +198,9 @@ export default function Features() {
           </p>
         </div>
 
-        <div className="space-y-32">
+        <div className="space-y-12">
           {sections.map((section, sidx) => (
-            <div key={sidx} className="space-y-12">
+            <div key={sidx} className="space-y-6">
               <div className="flex items-center gap-4">
                 <div className="h-px flex-1 bg-gradient-to-r from-transparent via-zinc-200 to-transparent"></div>
                 <div className="text-center px-4">
@@ -198,7 +210,7 @@ export default function Features() {
                 <div className="h-px flex-1 bg-gradient-to-r from-transparent via-zinc-200 to-transparent"></div>
               </div>
 
-              <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4 lg:grid-flow-row-dense">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 lg:grid-flow-row-dense">
                 {section.features.map((feature, fidx) => (
                   <FeatureCard 
                     key={fidx} 

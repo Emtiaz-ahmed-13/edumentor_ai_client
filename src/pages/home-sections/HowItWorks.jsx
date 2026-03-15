@@ -1,41 +1,45 @@
 import { ChartBar, FileSearch, Sparkles } from "lucide-react";
+import { Link } from "react-router";
 
 export default function HowItWorks() {
   const steps = [
     {
       number: "01",
-      title: "Query or Upload Content",
-      description: "Submit complex academic questions via text/voice, or upload your PDF documentation for retrieval-augmented processing and summarization.",
-      icon: <FileSearch className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+      title: "Ask Any Question",
+      description: "Type your question — whether it's a concept, formula, theory, or follow-up from a previous answer. Conversation history is preserved so the AI always has context.",
+      icon: <FileSearch className="w-8 h-8 text-blue-600 dark:text-blue-400" />,
+      link: null
     },
     {
       number: "02",
-      title: "Intelligent AI Processing",
-      description: "Our core engine analyzes your input to generate structured explanations, simplify abstract concepts, or debug code with high-precision logic.",
-      icon: <Sparkles className="w-8 h-8 text-purple-600 dark:text-purple-400" />
+      title: "Get Step-by-Step Breakdown",
+      description: "EduMentor AI returns a logical, numbered breakdown of every answer — plus an analogy, real-life example, and key takeaways — all in one structured response.",
+      icon: <Sparkles className="w-8 h-8 text-purple-600 dark:text-purple-400" />,
+      link: { label: "Try Ask AI →", to: "/ask-ai" }
     },
     {
       number: "03",
       title: "Assess & Optimize Growth",
       description: "Take AI-generated quizzes, review qualitative answer feedback, and track your personalized productivity and mastery via the analytics dashboard.",
-      icon: <ChartBar className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
+      icon: <ChartBar className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />,
+      link: null
     }
   ];
 
   return (
-    <section id="how-it-works" className="py-24 bg-zinc-50/50 dark:bg-zinc-950/50 border-t border-border">
-      <div className="container mx-auto px-4">
-        <div className="flex flex-col lg:flex-row items-center gap-16 lg:gap-24">
+    <section id="how-it-works" className="py-12 bg-zinc-50/50 dark:bg-zinc-950/50 border-t border-border">
+      <div className="container mx-auto px-4 max-w-6xl">
+        <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-12">
           
           <div className="w-full lg:w-1/2">
-            <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-8">The Workflow of Mastery</h2>
-            <p className="text-lg text-muted-foreground mb-12 max-w-xl leading-relaxed">
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">The Workflow of Mastery</h2>
+            <p className="text-base text-muted-foreground mb-6 max-w-xl leading-relaxed">
               We leverage sophisticated AI infrastructure to bridge the gap between information and understanding, creating a seamless, data-driven learning cycle.
             </p>
 
-            <div className="space-y-10">
+            <div className="space-y-6">
               {steps.map((step, idx) => (
-                <div key={idx} className="flex gap-8 group">
+                <div key={idx} className="flex gap-6 group">
                   <div className="relative flex flex-col items-center">
                     <div className="w-16 h-16 rounded-2xl bg-background border border-border flex items-center justify-center shadow-sm group-hover:shadow-md transition-all duration-300">
                       {step.icon}
@@ -48,6 +52,14 @@ export default function HowItWorks() {
                     <span className="text-sm font-bold tracking-widest text-primary/70 mb-2 block uppercase">Step {step.number}</span>
                     <h3 className="text-2xl font-bold mb-3">{step.title}</h3>
                     <p className="text-muted-foreground leading-relaxed max-w-md">{step.description}</p>
+                    {step.link && (
+                      <Link
+                        to={step.link.to}
+                        className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline transition-all"
+                      >
+                        {step.link.label}
+                      </Link>
+                    )}
                   </div>
                 </div>
               ))}
