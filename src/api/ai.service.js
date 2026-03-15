@@ -24,8 +24,9 @@ const aiService = {
 
   checkHealth: async () => {
     try {
-      const response = await api.get('/');
-      return response;
+      // Root check
+      const response = await axios.get((import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001/api/v1').replace('/api/v1', ''));
+      return response.data;
     } catch (error) {
       console.error('Health Check Error:', error);
       throw error;

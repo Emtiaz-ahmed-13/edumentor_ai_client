@@ -7,6 +7,7 @@ import {
   Globe, HelpCircle,
   History,
   Loader2,
+  MessageSquare,
   Sparkles,
   Target,
   Trash2,
@@ -48,6 +49,7 @@ const DIFFICULTY_STYLES = {
 
 const RESULT_CARDS = [
   { key: 'explanation',         title: 'Simple Explanation',      icon: <BookOpen className="w-5 h-5 text-indigo-500" />, border: 'border-l-indigo-500', shadow: 'hover:shadow-indigo-500/10', isList: false },
+  { key: 'steps',               title: 'Detailed Steps',          icon: <Zap className="w-5 h-5 text-amber-500" />, border: 'border-l-amber-500', shadow: 'hover:shadow-amber-500/10', isList: true },
   { key: 'realLifeExample',     title: 'Real-Life Example',       icon: <Globe className="w-5 h-5 text-emerald-500" />, border: 'border-l-emerald-500', shadow: 'hover:shadow-emerald-500/10', isList: false },
   { key: 'analogy',             title: 'Analogy',                 icon: <Zap className="w-5 h-5 text-purple-500" />, border: 'border-l-purple-500', shadow: 'hover:shadow-purple-500/10', isList: false },
   { key: 'keyPoints',           title: 'Key Points',              icon: <Target className="w-5 h-5 text-amber-500" />, border: 'border-l-amber-500', shadow: 'hover:shadow-amber-500/10', isList: true },
@@ -273,16 +275,16 @@ const ConceptSimplifier = () => {
     <div className="min-h-screen flex flex-col bg-zinc-50 dark:bg-zinc-950 font-sans selection:bg-primary/20">
       <Navbar />
 
-      <main className="relative flex-1 pt-24 pb-16 px-4 sm:px-6">
-        <div className="max-w-7xl mx-auto">
+      <main className="relative flex-1 pt-20 pb-10 px-4 sm:px-6">
+        <div className="max-w-6xl mx-auto">
 
           {/* ── Header ── */}
-          <div className="text-center mb-10">
+          <div className="text-center mb-6">
             <div className="inline-flex items-center gap-2 bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/30 rounded-full px-4 py-1.5 text-indigo-600 dark:text-indigo-300 text-xs font-bold tracking-wider uppercase mb-4 shadow-sm">
               <Sparkles className="w-3.5 h-3.5 text-amber-500 animate-pulse" />
               Powered by Gemini AI
             </div>
-            <h1 className="text-4xl sm:text-5xl font-extrabold text-zinc-900 dark:text-white mb-3 tracking-tight">
+            <h1 className="text-3xl sm:text-4xl font-extrabold text-zinc-900 dark:text-white mb-2 tracking-tight">
               Concept Simplifier
             </h1>
             <p className="text-zinc-500 dark:text-zinc-400 text-lg max-w-xl mx-auto font-medium">
@@ -290,12 +292,12 @@ const ConceptSimplifier = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-6">
 
             {/* ── Left Sidebar: History ── */}
             <aside className="lg:sticky lg:top-28 lg:self-start">
               <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 shadow-sm">
-                <div className="flex items-center gap-2 mb-5">
+                <div className="flex items-center gap-2 mb-4">
                   <div className="p-1.5 bg-indigo-50 dark:bg-indigo-500/10 rounded-lg">
                     <History className="w-4 h-4 text-indigo-500" />
                   </div>
@@ -307,7 +309,7 @@ const ConceptSimplifier = () => {
                   )}
                 </div>
 
-                <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-1 custom-scrollbar">
+                <div className="space-y-2 max-h-[55vh] overflow-y-auto pr-1 custom-scrollbar">
                   {historyLoading ? (
                     [1, 2, 3, 4].map((i) => (
                       <div key={i} className="h-20 bg-zinc-50 dark:bg-white/5 rounded-xl animate-pulse border border-zinc-100 dark:border-zinc-800" />
@@ -335,16 +337,16 @@ const ConceptSimplifier = () => {
             </aside>
 
             {/* ── Right Panel ── */}
-            <div className="space-y-6">
+            <div className="space-y-5">
 
               {/* Input card */}
-              <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-8 shadow-xl relative overflow-hidden">
+              <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 shadow-lg relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 rounded-full blur-3xl -mr-32 -mt-32 pointer-events-none"></div>
                 
-                <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
+                <form onSubmit={handleSubmit} className="space-y-4 relative z-10">
                   {/* Topic input */}
                   <div>
-                    <label className="block text-zinc-900 dark:text-zinc-200 text-xs font-bold uppercase tracking-wider mb-3">
+                    <label className="block text-zinc-900 dark:text-zinc-200 text-xs font-bold uppercase tracking-wider mb-2">
                       Topic or Concept
                     </label>
                     <textarea
@@ -359,7 +361,7 @@ const ConceptSimplifier = () => {
 
                   {/* Difficulty selector */}
                   <div>
-                    <label className="block text-zinc-900 dark:text-zinc-200 text-xs font-bold uppercase tracking-wider mb-3">
+                    <label className="block text-zinc-900 dark:text-zinc-200 text-xs font-bold uppercase tracking-wider mb-2">
                       Difficulty Level
                     </label>
                     <div className="flex gap-3 flex-wrap">
@@ -436,6 +438,11 @@ const ConceptSimplifier = () => {
                       <span className={`text-[10px] uppercase font-extrabold px-2.5 py-0.5 rounded-full border tracking-widest ${currentDifficultyStyles.badge}`}>
                         {currentResult.difficultyLevel || currentResult.difficulty}
                       </span>
+                      {currentResult.subject && (
+                        <span className="text-[10px] uppercase font-extrabold px-2.5 py-0.5 rounded-full border border-indigo-100 bg-indigo-50 text-indigo-600 dark:border-indigo-500/20 dark:bg-indigo-500/10 dark:text-indigo-400 tracking-widest">
+                          {currentResult.subject}
+                        </span>
+                      )}
                     </div>
 
                     {/* 6-card grid */}
@@ -452,6 +459,31 @@ const ConceptSimplifier = () => {
                         />
                       ))}
                     </div>
+
+                    {/* Follow-up Questions */}
+                    {Array.isArray(currentResult.followUpQuestions) && currentResult.followUpQuestions.length > 0 && (
+                      <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6">
+                        <h4 className="text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-4 flex items-center gap-2">
+                          <MessageSquare className="w-3.5 h-3.5" />
+                          Recommended Next Steps
+                        </h4>
+                        <div className="flex flex-wrap gap-2">
+                          {currentResult.followUpQuestions.map((q, i) => (
+                            <button
+                              key={i}
+                              onClick={() => {
+                                setTopic(q);
+                                window.scrollTo({ top: 0, behavior: 'smooth' });
+                                document.getElementById('topic-input')?.focus();
+                              }}
+                              className="text-xs font-bold px-4 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl text-zinc-600 dark:text-zinc-400 hover:border-primary hover:text-primary transition-all"
+                            >
+                              {q}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ) : (
                   /* Empty state */

@@ -60,8 +60,8 @@ const DIFFICULTY_LEVELS = [
  * - analogy callout
  * - key points list
  */
-function StructuredAIMessage({ data }) {
-  const { explanation, steps, analogy, realLifeExample, keyPoints } = data;
+function StructuredAIMessage({ data, onFollowUp }) {
+  const { explanation, steps, analogy, realLifeExample, keyPoints, subject, followUpQuestions } = data;
 
   return (
     <div className="space-y-4 text-sm leading-relaxed">
@@ -135,6 +135,27 @@ function StructuredAIMessage({ data }) {
               </li>
             ))}
           </ul>
+        </div>
+      )}
+
+      {/* Follow-up Questions */}
+      {Array.isArray(followUpQuestions) && followUpQuestions.length > 0 && (
+        <div className="pt-4 border-t border-zinc-100 dark:border-zinc-800/50">
+          <p className="text-[9px] font-black uppercase tracking-widest text-zinc-400 mb-2 flex items-center gap-2">
+            <MessageSquare className="w-3 h-3" />
+            Recommended Follow-ups
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {followUpQuestions.map((q, i) => (
+              <button
+                key={i}
+                onClick={() => onFollowUp && onFollowUp(q)}
+                className="text-[10px] font-bold px-3 py-1.5 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-full text-zinc-600 dark:text-zinc-400 hover:border-primary hover:text-primary transition-all"
+              >
+                {q}
+              </button>
+            ))}
+          </div>
         </div>
       )}
     </div>
@@ -233,7 +254,25 @@ export default function AskAI() {
       );
     }
     // Structured AI response
-    return <StructuredAIMessage data={msg.content} />;
+    return (
+      <div>
+        {msg.content.subject && (
+          <div className="mb-2 flex items-center gap-2">
+            <span className="text-[9px] font-black uppercase tracking-widest bg-primary/10 text-primary px-2 py-0.5 rounded">
+              {msg.content.subject}
+            </span>
+          </div>
+        )}
+        <StructuredAIMessage 
+          data={msg.content} 
+          onFollowUp={(q) => {
+            setQuestion(q);
+            // We can't call handleSend directly easily because it's an async event handler,
+            // but we can set the question and the user just clicks send, or we trigger it.
+          }} 
+        />
+      </div>
+    );
   };
 
   const lastDifficulty = DIFFICULTY_LEVELS.find(l => l.id === difficulty);
@@ -242,9 +281,9 @@ export default function AskAI() {
     <div className="min-h-screen flex flex-col bg-zinc-50 dark:bg-zinc-950 font-sans selection:bg-primary/20">
       <Navbar />
 
-      <main className="flex-1 flex flex-col pt-24 pb-8 container mx-auto px-4 max-w-4xl">
+      <main className="flex-1 flex flex-col pt-20 pb-6 container mx-auto px-4 max-w-4xl">
         {/* Header Section */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 animate-in fade-in slide-in-from-top-4 duration-700">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6 animate-in fade-in slide-in-from-top-4 duration-700">
            <div className="flex items-center gap-4">
             <div className="bg-primary text-primary-foreground p-3 rounded-2xl shadow-xl shadow-primary/20 rotate-3 transition-transform hover:rotate-0">
               <Brain className="w-7 h-7" />
@@ -284,13 +323,13 @@ export default function AskAI() {
         </div>
 
         {/* Chat Container */}
-        <div className="flex-1 bg-white dark:bg-zinc-900 rounded-[2.5rem] border border-zinc-200 dark:border-zinc-800 shadow-2xl overflow-hidden flex flex-col relative">
+        <div className="flex-1 bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-xl overflow-hidden flex flex-col relative">
           {/* Subtle Background Accent */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-[100px] -mr-32 -mt-32 pointer-events-none" />
           
           <div
             ref={scrollRef}
-            className="flex-1 overflow-y-auto p-6 md:p-10 space-y-8 scroll-smooth custom-scrollbar relative z-10"
+            className="flex-1 overflow-y-auto p-5 md:p-6 space-y-6 scroll-smooth custom-scrollbar relative z-10"
             style={{ minHeight: "450px", maxHeight: "calc(100vh - 400px)" }}
           >
             {chatHistory.map((msg, idx) => (
@@ -352,10 +391,10 @@ export default function AskAI() {
           </div>
 
           {/* Input Area */}
-          <div className="p-6 md:p-8 bg-zinc-50/50 dark:bg-zinc-900/50 border-t border-zinc-100 dark:border-zinc-800 backdrop-blur-xl relative z-20">
+          <div className="p-4 md:p-5 bg-zinc-50/50 dark:bg-zinc-900/50 border-t border-zinc-100 dark:border-zinc-800 backdrop-blur-xl relative z-20">
             <form onSubmit={handleSend} className="relative flex items-center gap-4">
               <div className="relative flex-1 group">
-                <div className="absolute inset-0 bg-primary/5 rounded-2xl blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity" />
+                <div className="absolute inset-0 bg-primary/5 rounded-2xl blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity pointer-events-none" />
                 <textarea
                   value={question}
                   onChange={(e) => setQuestion(e.target.value)}
@@ -383,7 +422,7 @@ export default function AskAI() {
                 </button>
               </div>
             </form>
-            <div className="flex items-center justify-between mt-4 px-2">
+            <div className="flex items-center justify-between mt-3 px-2">
                <p className="text-[10px] text-zinc-400 font-black uppercase tracking-[0.2em]">
                 EduMentor AI Tutor · {difficulty} Mode
               </p>

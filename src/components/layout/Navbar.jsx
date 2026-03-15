@@ -22,12 +22,12 @@ export default function Navbar() {
   }, []);
 
   const navLinks = [
+    { name: "Note Summarizer", href: "/notes", isInternal: true },
     { name: "Concept Simplifier", href: "/concept-simplifier", isInternal: true },
     { name: "Ask AI", href: "/ask-ai", isInternal: true },
     { name: "Code Optimizer", href: "/code-ai", isInternal: true },
     { name: "Features", href: "#features" },
     { name: "How it Works", href: "#how-it-works" },
-    { name: "Testimonials", href: "#testimonials" },
     { name: "Pricing", href: "#pricing" },
   ];
 

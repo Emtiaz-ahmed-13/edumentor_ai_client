@@ -27,19 +27,19 @@ export default function HowItWorks() {
   ];
 
   return (
-    <section id="how-it-works" className="py-24 bg-zinc-50/50 dark:bg-zinc-950/50 border-t border-border">
-      <div className="container mx-auto px-4">
-        <div className="flex flex-col lg:flex-row items-center gap-16 lg:gap-24">
+    <section id="how-it-works" className="py-12 bg-zinc-50/50 dark:bg-zinc-950/50 border-t border-border">
+      <div className="container mx-auto px-4 max-w-6xl">
+        <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-12">
           
           <div className="w-full lg:w-1/2">
-            <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-8">The Workflow of Mastery</h2>
-            <p className="text-lg text-muted-foreground mb-12 max-w-xl leading-relaxed">
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">The Workflow of Mastery</h2>
+            <p className="text-base text-muted-foreground mb-6 max-w-xl leading-relaxed">
               We leverage sophisticated AI infrastructure to bridge the gap between information and understanding, creating a seamless, data-driven learning cycle.
             </p>
 
-            <div className="space-y-10">
+            <div className="space-y-6">
               {steps.map((step, idx) => (
-                <div key={idx} className="flex gap-8 group">
+                <div key={idx} className="flex gap-6 group">
                   <div className="relative flex flex-col items-center">
                     <div className="w-16 h-16 rounded-2xl bg-background border border-border flex items-center justify-center shadow-sm group-hover:shadow-md transition-all duration-300">
                       {step.icon}

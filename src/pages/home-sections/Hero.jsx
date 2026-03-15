@@ -5,23 +5,23 @@ import { Link } from "react-router";
 
 export default function Hero() {
   return (
-    <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden">
+    <section className="relative pt-24 pb-12 md:pt-32 md:pb-16 overflow-hidden">
       {/* Background Gradient */}
       <div className="absolute inset-0 -z-10 h-full w-full bg-white dark:bg-zinc-950 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#1f2937_1px,transparent_1px)] [background-size:16px_16px]">
         <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-primary/20 opacity-40 blur-[100px]"></div>
       </div>
 
       <div className="container mx-auto px-4 text-center">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-muted/50 text-muted-foreground text-sm font-medium mb-8 border border-border pb-1">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-muted/50 text-muted-foreground text-sm font-medium mb-4 border border-border pb-1">
           <Sparkles className="w-4 h-4 text-primary" />
           <span>Step-by-Step AI Breakdowns · Follow-up Questions · Powered by Gemini</span>
         </div>
         
-        <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-8 text-foreground max-w-5xl mx-auto leading-[1.1]">
+        <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-4 text-foreground max-w-5xl mx-auto leading-[1.1]">
           Master Any Subject with <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-600">EduMentor AI</span>
         </h1>
         
-        <p className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-3xl mx-auto leading-relaxed">
+        <p className="text-lg md:text-xl text-muted-foreground mb-6 max-w-3xl mx-auto leading-relaxed">
           Ask any question and receive logical, step-by-step breakdowns with full conversation memory — so you can ask follow-ups just like talking to a real tutor.
         </p>
         
@@ -40,7 +40,7 @@ export default function Hero() {
         </div>
 
         {/* Dashboard Preview Mockup */}
-        <div className="mt-20 mx-auto max-w-5xl relative group">
+        <div className="mt-10 mx-auto max-w-5xl relative group">
           <div className="rounded-3xl border border-zinc-200 bg-white/80 backdrop-blur-md shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] overflow-hidden p-2 transition-all duration-700 hover:shadow-[0_48px_96px_-24px_rgba(0,0,0,0.15)] hover:-translate-y-2">
             <div className="rounded-2xl overflow-hidden border border-zinc-100 bg-zinc-50 relative">
                <img 
