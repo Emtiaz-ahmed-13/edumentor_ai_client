@@ -137,138 +137,77 @@ export default function Notes() {
 
     return (
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-        <div className="lg:col-span-2 space-y-5">
+        <div className="lg:col-span-2 space-y-6">
           {/* Overview & Metadata */}
-          <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 shadow-sm">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5">
-              <div className="flex items-center gap-3">
-                <div className="bg-primary/10 p-2.5 rounded-xl text-primary">
-                  <FileText className="w-6 h-6" />
+          <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-8 shadow-sm">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+              <div className="flex items-center gap-4">
+                <div className="bg-primary/10 p-3 rounded-xl text-primary">
+                  <FileText className="w-7 h-7" />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-black tracking-tight">{summary.title || note.title}</h2>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-primary mt-0.5">{summary.subject || "Academic Resources"}</p>
+                  <h2 className="text-3xl font-black tracking-tight">{summary.title || note.title}</h2>
+                  <p className="text-[11px] font-black uppercase tracking-widest text-primary mt-1">{summary.subject || "Academic Resources"}</p>
                 </div>
               </div>
               <div className="flex gap-2">
-                <div className="px-3 py-1.5 bg-zinc-50 dark:bg-zinc-800 rounded-full border border-zinc-100 dark:border-zinc-700 flex items-center gap-2">
-                  <BookOpen className="w-3.5 h-3.5 text-zinc-400" />
-                  <span className="text-[9px] font-bold text-zinc-500 uppercase">{pageCount || 0} Pages</span>
+                <div className="px-4 py-2 bg-zinc-50 dark:bg-zinc-800 rounded-full border border-zinc-100 dark:border-zinc-700 flex items-center gap-2">
+                  <BookOpen className="w-4 h-4 text-zinc-400" />
+                  <span className="text-[10px] font-bold text-zinc-500 uppercase">{pageCount || 0} Pages</span>
                 </div>
-                <div className="px-3 py-1.5 bg-zinc-50 dark:bg-zinc-800 rounded-full border border-zinc-100 dark:border-zinc-700 flex items-center gap-2">
-                  <Zap className="w-3.5 h-3.5 text-zinc-400" />
-                  <span className="text-[9px] font-bold text-zinc-500 uppercase">{wordCount || 0} Words</span>
+                <div className="px-4 py-2 bg-zinc-50 dark:bg-zinc-800 rounded-full border border-zinc-100 dark:border-zinc-700 flex items-center gap-2">
+                  <Zap className="w-4 h-4 text-zinc-400" />
+                  <span className="text-[10px] font-bold text-zinc-500 uppercase">{wordCount || 0} Words</span>
                 </div>
               </div>
             </div>
-            <p className="text-foreground/80 leading-relaxed font-medium text-sm">{summary.overview}</p>
+            <p className="text-foreground/80 leading-relaxed font-medium text-base">{summary.overview}</p>
           </div>
 
           {/* Main Topics */}
           <div className="space-y-4">
-            <h4 className="text-xs font-black uppercase tracking-[0.2em] text-zinc-400 flex items-center gap-2 px-2">
-              <ClipboardCheck className="w-4 h-4" />
-              Core Concepts Explored
+            <h4 className="text-sm font-black uppercase tracking-[0.15em] text-zinc-400 flex items-center gap-2 px-2">
+              <ClipboardCheck className="w-5 h-5" />
+              Summary
             </h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-4">
               {summary.mainTopics?.map((item, idx) => (
-                <div key={idx} className="bg-white dark:bg-zinc-900 rounded-3xl border border-zinc-200 dark:border-zinc-800 p-6 shadow-sm hover:border-primary/20 transition-all">
-                  <h3 className="text-primary font-black uppercase text-[10px] tracking-widest mb-2 flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                <div key={idx} className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 shadow-sm hover:border-primary/20 transition-all">
+                  <h3 className="text-primary font-black text-sm tracking-wide mb-3 flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-primary" />
                     {item.topic}
                   </h3>
-                  <p className="text-xs text-foreground/70 leading-relaxed font-medium">{item.explanation}</p>
+                  <p className="text-sm text-foreground/70 leading-relaxed font-medium">{item.explanation}</p>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Key Takeaways & Definitions */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-4">
-              <h4 className="text-xs font-black uppercase tracking-[0.2em] text-zinc-400 flex items-center gap-2 px-2">
-                <Zap className="w-4 h-4 text-amber-500" />
-                Key Takeaways
-              </h4>
-              <div className="space-y-3">
-                {summary.keyTakeaways?.map((point, i) => (
-                  <div key={i} className="flex items-start gap-4 bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-800 p-4 rounded-2xl group">
-                    <CheckCircle2 className="mt-0.5 w-4 h-4 text-emerald-500 flex-shrink-0 opacity-40 group-hover:opacity-100 transition-opacity" />
-                    <p className="text-xs font-bold text-foreground/80 leading-relaxed">{point}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <h4 className="text-xs font-black uppercase tracking-[0.2em] text-zinc-400 flex items-center gap-2 px-2">
-                <BookOpen className="w-4 h-4 text-primary" />
-                Terminology
-              </h4>
-              <div className="space-y-3">
-                {summary.definitions?.map((def, i) => (
-                  <div key={i} className="bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 p-4 rounded-2xl shadow-sm">
-                    <span className="text-[10px] font-black text-primary uppercase tracking-widest block mb-1">{def.term}</span>
-                    <p className="text-[11px] font-medium text-foreground/70">{def.definition}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* MCQs & Short Answers */}
-          <div className="space-y-6 pt-4">
-            <h4 className="text-xs font-black uppercase tracking-[0.2em] text-zinc-400 flex items-center gap-2 px-2">
-              <HelpCircle className="w-4 h-4 text-amber-500" />
-              Exam Preparation (MCQs)
+          {/* Key Takeaways */}
+          <div className="space-y-4">
+            <h4 className="text-sm font-black uppercase tracking-[0.15em] text-zinc-400 flex items-center gap-2 px-2">
+              <Zap className="w-5 h-5 text-amber-500" />
+              Key Takeaways
             </h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {summary.examQuestions?.mcq?.map((q, i) => (
-                <div key={i} className="bg-amber-50/50 dark:bg-amber-500/5 border border-amber-100 dark:border-amber-500/10 p-6 rounded-3xl space-y-4">
-                  <div className="flex gap-3">
-                    <span className="text-amber-500 font-black text-xs">Q{i+1}:</span>
-                    <p className="text-xs font-bold text-zinc-800 dark:text-zinc-200">{q.question}</p>
-                  </div>
-                  <div className="grid grid-cols-1 gap-2">
-                    {q.options?.map((opt, idx) => (
-                      <div key={idx} className="bg-white dark:bg-zinc-950 px-3 py-2 rounded-xl border border-amber-200/20 text-[10px] font-medium text-zinc-600 dark:text-zinc-400">
-                        {opt}
-                      </div>
-                    ))}
-                  </div>
-                  <div className="pt-2 border-t border-amber-200/20">
-                    <p className="text-[9px] font-black uppercase tracking-widest text-emerald-600">Correct: {q.answer}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <h4 className="text-xs font-black uppercase tracking-[0.2em] text-zinc-400 flex items-center gap-2 px-2 pt-4">
-              <FileText className="w-4 h-4 text-blue-500" />
-              Short Answer Practice
-            </h4>
-            <div className="space-y-4">
-              {summary.examQuestions?.shortAnswer?.map((q, i) => (
-                <div key={i} className="bg-blue-50/50 dark:bg-blue-500/5 border border-blue-100 dark:border-blue-500/10 p-6 rounded-3xl">
-                  <p className="text-xs font-bold text-blue-900 dark:text-blue-400 mb-3">{q.question}</p>
-                  <div className="bg-white dark:bg-zinc-950 p-4 rounded-xl border border-blue-200/20">
-                    <span className="text-[8px] font-black uppercase tracking-widest text-zinc-400 block mb-2">Model Answer</span>
-                    <p className="text-[11px] font-medium text-zinc-600 dark:text-zinc-400 italic">"{q.modelAnswer}"</p>
-                  </div>
+            <div className="space-y-3">
+              {summary.keyTakeaways?.map((point, i) => (
+                <div key={i} className="flex items-start gap-4 bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-800 p-5 rounded-2xl group">
+                  <CheckCircle2 className="mt-0.5 w-5 h-5 text-emerald-500 flex-shrink-0 opacity-40 group-hover:opacity-100 transition-opacity" />
+                  <p className="text-sm font-medium text-foreground/80 leading-relaxed">{point}</p>
                 </div>
               ))}
             </div>
           </div>
         </div>
 
-        {/* Sidebar: Q&A + Tips */}
+        {/* Sidebar: Q&A */}
         <div className="space-y-5">
            {/* Document Q&A */}
-           <div className="bg-zinc-900 dark:bg-zinc-900 border border-zinc-800 rounded-[2.5rem] flex flex-col h-[600px] shadow-2xl overflow-hidden">
+           <div className="bg-zinc-900 dark:bg-zinc-900 border border-zinc-800 rounded-[2.5rem] flex flex-col h-[700px] shadow-2xl overflow-hidden">
               <div className="p-6 border-b border-zinc-800 flex items-center justify-between">
                 <div>
                   <h4 className="text-white text-sm font-black tracking-tight">Chat with Document</h4>
-                  <p className="text-[9px] text-zinc-500 font-bold uppercase tracking-widest">EduMentor Engine v2.0</p>
+                  <p className="text-[9px] text-zinc-500 font-bold uppercase tracking-widest">Ask questions about this note</p>
                 </div>
                 <div className="bg-primary/20 p-2 rounded-xl text-primary">
                   <MessageSquare className="w-4 h-4" />
@@ -279,14 +218,14 @@ export default function Notes() {
                 {qaHistory.length === 0 && (
                   <div className="h-full flex flex-col items-center justify-center text-center p-4">
                     <Bot className="w-10 h-10 text-zinc-700 mb-4" />
-                    <p className="text-zinc-500 text-[11px] font-medium leading-relaxed">
+                    <p className="text-zinc-500 text-xs font-medium leading-relaxed">
                       Ask any specific question about the content of this document. I'll search for the answer.
                     </p>
                   </div>
                 )}
                 {qaHistory.map((msg, i) => (
                   <div key={i} className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
-                    <div className={`max-w-[90%] p-4 rounded-2xl text-[11px] font-medium leading-relaxed ${
+                    <div className={`max-w-[90%] p-4 rounded-2xl text-xs font-medium leading-relaxed ${
                       msg.role === 'user' 
                         ? 'bg-primary text-white rounded-tr-none' 
                         : 'bg-zinc-800 text-zinc-200 rounded-tl-none border border-zinc-700'
@@ -317,7 +256,7 @@ export default function Notes() {
                     value={qaQuestion}
                     onChange={(e) => setQaQuestion(e.target.value)}
                     placeholder="Ask about this note..."
-                    className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-[11px] text-white focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all pr-12"
+                    className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all pr-12"
                   />
                   <button
                     type="submit"
@@ -327,22 +266,6 @@ export default function Notes() {
                   </button>
                 </div>
               </form>
-           </div>
-
-           {/* Study Tips */}
-           <div className="bg-amber-50/50 dark:bg-amber-500/5 rounded-[2rem] p-6 border border-amber-100 dark:border-amber-500/10">
-             <h4 className="text-[10px] font-black uppercase tracking-widest text-amber-600 mb-4 flex items-center gap-2">
-              <Lightbulb className="w-3.5 h-3.5" />
-              EduMentor Study Tips
-             </h4>
-             <ul className="space-y-4">
-                {summary.studyTips?.map((tip, i) => (
-                  <li key={i} className="flex items-start gap-3">
-                    <div className="mt-1 flex-shrink-0 w-4 h-4 rounded-full bg-amber-200/50 flex items-center justify-center text-[10px] font-bold text-amber-700">{i+1}</div>
-                    <p className="text-[11px] font-medium text-amber-900 dark:text-amber-400/80 leading-relaxed">{tip}</p>
-                  </li>
-                ))}
-             </ul>
            </div>
         </div>
       </div>
@@ -449,23 +372,18 @@ export default function Notes() {
               </div>
             </div>
 
-            {/* List of Previous Summaries */}
+            {/* List of Previous Notes */}
             <div className="lg:col-span-2 space-y-4">
-              <h4 className="text-xs font-black uppercase tracking-[0.2em] text-zinc-400 flex items-center gap-2 px-2">
-                <BookOpen className="w-4 h-4" />
-                Library of Knowledge
-              </h4>
-
               {notes.length === 0 ? (
                 <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-12 text-center shadow-sm">
                   <div className="bg-zinc-50 dark:bg-zinc-950 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 text-zinc-200">
                     <BookOpen className="w-10 h-10" />
                   </div>
-                  <h3 className="text-xl font-black tracking-tight text-zinc-400">Your library is empty</h3>
-                  <p className="text-xs font-medium text-zinc-400 mt-2">Upload a lecture note to see the magic happen.</p>
+                  <h3 className="text-xl font-black tracking-tight text-zinc-400">No notes yet</h3>
+                  <p className="text-xs font-medium text-zinc-400 mt-2">Upload your first PDF to get started</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4">
                   {notes.map((note) => (
                     <button
                       key={note._id}
@@ -473,31 +391,71 @@ export default function Notes() {
                         setSelectedNote(note);
                         setQaHistory([]);
                       }}
-                      className="group bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-5 rounded-2xl text-left hover:border-primary/40 transition-all hover:translate-y-[-2px] hover:shadow-xl hover:shadow-primary/5 relative overflow-hidden flex flex-col justify-between h-[160px]"
+                      className="group bg-gradient-to-br from-white to-zinc-50 dark:from-zinc-900 dark:to-zinc-900/50 border border-zinc-200 dark:border-zinc-800 p-6 rounded-3xl text-left hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/10 transition-all duration-300 relative overflow-hidden"
                     >
-                      <div className="absolute top-0 right-0 p-6 opacity-0 group-hover:opacity-100 transition-opacity">
-                         <ChevronRight className="w-5 h-5 text-primary" />
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-3 mb-2">
-                          <div className="bg-zinc-50 dark:bg-zinc-800 p-3.5 rounded-2xl group-hover:bg-primary/10 group-hover:text-primary transition-colors text-zinc-400">
-                            <FileText className="w-6 h-6" />
+                      {/* Gradient overlay on hover */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      
+                      <div className="relative z-10 flex items-start gap-5">
+                        {/* Icon */}
+                        <div className="flex-shrink-0 bg-gradient-to-br from-primary/10 to-primary/5 p-4 rounded-2xl group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
+                          <FileText className="w-7 h-7 text-primary" />
+                        </div>
+
+                        {/* Content */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start justify-between gap-4 mb-3">
+                            <div className="flex-1 min-w-0">
+                              <h3 className="font-black text-lg text-foreground mb-1 truncate group-hover:text-primary transition-colors">
+                                {note.title}
+                              </h3>
+                              <div className="flex items-center gap-3 flex-wrap">
+                                <span className="inline-flex items-center gap-1.5 text-[10px] font-bold text-zinc-500 uppercase tracking-wider">
+                                  <BookOpen className="w-3 h-3" />
+                                  {note.pageCount || 1} pages
+                                </span>
+                                <span className="text-zinc-300 dark:text-zinc-700">•</span>
+                                <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">
+                                  {new Date(note.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                </span>
+                                <span className="text-zinc-300 dark:text-zinc-700">•</span>
+                                <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">
+                                  {note.wordCount?.toLocaleString() || 0} words
+                                </span>
+                              </div>
+                            </div>
+                            
+                            {/* Arrow icon */}
+                            <div className="flex-shrink-0 bg-zinc-100 dark:bg-zinc-800 p-2.5 rounded-xl group-hover:bg-primary group-hover:text-white transition-all duration-300 group-hover:translate-x-1">
+                              <ChevronRight className="w-4 h-4" />
+                            </div>
                           </div>
-                          <div className="overflow-hidden">
-                            <h3 className="font-black text-sm truncate pr-4">{note.title}</h3>
-                            <p className="text-[9px] font-bold text-zinc-400 uppercase tracking-widest mt-0.5">
-                              {new Date(note.createdAt).toLocaleDateString()} · {note.pageCount || 1} Pages
-                            </p>
+
+                          {/* Overview */}
+                          <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400 line-clamp-2 leading-relaxed mb-4">
+                            {note.summary?.overview || "AI-generated study guide from your uploaded PDF document."}
+                          </p>
+
+                          {/* Tags */}
+                          <div className="flex items-center gap-2 flex-wrap">
+                            {note.summary?.subject && (
+                              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 text-primary rounded-full text-[9px] font-black uppercase tracking-widest">
+                                <Sparkles className="w-3 h-3" />
+                                {note.summary.subject}
+                              </span>
+                            )}
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-full text-[9px] font-black uppercase tracking-widest">
+                              <CheckCircle2 className="w-3 h-3" />
+                              RAG Processed
+                            </span>
+                            {note.summary?.mainTopics?.length > 0 && (
+                              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-full text-[9px] font-black uppercase tracking-widest">
+                                <ClipboardCheck className="w-3 h-3" />
+                                {note.summary.mainTopics.length} Topics
+                              </span>
+                            )}
                           </div>
                         </div>
-                        <p className="text-[11px] font-medium text-zinc-500 line-clamp-3 leading-relaxed">
-                          {note.summary?.overview || "Study guide generated from uploaded PDF note."}
-                        </p>
-                      </div>
-                      <div className="pt-4 flex gap-2">
-                        <span className="text-[8px] font-black uppercase tracking-widest bg-primary/5 text-primary px-2 py-1 rounded-md">
-                          {note.summary?.subject || "Subject"}
-                        </span>
                       </div>
                     </button>
                   ))}
