@@ -12,11 +12,14 @@ import {
   RotateCcw,
   Sparkles,
   Zap,
+  Square,
+  Volume2,
 } from "lucide-react";
 import { useState } from "react";
 import aiService from "../api/ai.service";
 import Footer from "../components/layout/Footer";
 import Navbar from "../components/layout/Navbar";
+import { speakText, stopSpeaking } from "../utils/textToSpeech";
 
 const LANGUAGES = [
   { id: 'javascript', label: 'JavaScript', icon: FileCode },
@@ -39,6 +42,27 @@ export default function CodeAI() {
   const [result, setResult] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [speakingIdx, setSpeakingIdx] = useState(null);
+  const [ttsLoading, setTtsLoading] = useState(false);
+
+  const handleSpeak = async (text, id) => {
+    setSpeakingIdx(id);
+    setTtsLoading(true);
+    try {
+      await speakText(text);
+    } catch (err) {
+      console.error("TTS Error:", err);
+    } finally {
+      setSpeakingIdx(null);
+      setTtsLoading(false);
+    }
+  };
+
+  const handleStop = () => {
+    stopSpeaking();
+    setSpeakingIdx(null);
+    setTtsLoading(false);
+  };
 
   const handleAnalyze = async () => {
     if (!code.trim() || isLoading) return;
@@ -100,11 +124,10 @@ export default function CodeAI() {
                 <button
                   key={level.id}
                   onClick={() => setDifficulty(level.id)}
-                  className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${
-                    difficulty === level.id 
-                      ? `${level.bg} ${level.color} shadow-sm` 
+                  className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${difficulty === level.id
+                      ? `${level.bg} ${level.color} shadow-sm`
                       : 'text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300'
-                  }`}
+                    }`}
                 >
                   {level.label}
                 </button>
@@ -193,10 +216,36 @@ export default function CodeAI() {
               <div className="flex-1 space-y-6 animate-in fade-in slide-in-from-right-4 duration-700 overflow-y-auto pr-2 custom-scrollbar max-h-[calc(100vh-320px)]">
                 {/* Explanation */}
                 <div className="bg-white dark:bg-zinc-900 p-6 rounded-[2rem] border border-zinc-200 dark:border-zinc-800 shadow-sm">
-                  <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary mb-4 flex items-center gap-2">
-                    <Lightbulb className="w-3.5 h-3.5" />
-                    Conceptual Breakdown
-                  </h4>
+                  <div className="flex justify-between items-start mb-4">
+                    <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary flex items-center gap-2">
+                      <Lightbulb className="w-3.5 h-3.5" />
+                      Conceptual Breakdown
+                    </h4>
+                    <div className="flex gap-2">
+                      {speakingIdx === 'explanation' ? (
+                        <button
+                          onClick={handleStop}
+                          className="flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-bold rounded-lg border border-rose-200 dark:border-rose-900/30 bg-rose-50 dark:bg-rose-500/10 text-rose-500 transition-all"
+                        >
+                          <Square className="w-3 h-3 fill-current" />
+                          Stop
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => handleSpeak(result.explanation, 'explanation')}
+                          disabled={ttsLoading}
+                          className="flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-bold rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-500 hover:text-primary hover:border-primary/40 transition-all disabled:opacity-50"
+                        >
+                          {speakingIdx === 'explanation' && ttsLoading ? (
+                            <Loader2 className="w-3 h-3 animate-spin" />
+                          ) : (
+                            <Volume2 className="w-3 h-3" />
+                          )}
+                          Listen
+                        </button>
+                      )}
+                    </div>
+                  </div>
                   <p className="text-sm text-foreground/80 leading-relaxed font-medium">
                     {result.explanation}
                   </p>
@@ -242,8 +291,8 @@ export default function CodeAI() {
                     <ul className="space-y-3">
                       {result.optimizations.map((opt, i) => (
                         <li key={i} className="flex items-start gap-3 bg-white/50 dark:bg-zinc-950/30 p-3 rounded-xl border border-amber-200/50 dark:border-amber-500/10 text-sm text-foreground/80 font-medium">
-                           <CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 flex-shrink-0" />
-                           {opt}
+                          <CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 flex-shrink-0" />
+                          {opt}
                         </li>
                       ))}
                     </ul>
@@ -258,7 +307,7 @@ export default function CodeAI() {
                         <CheckCircle2 className="w-3.5 h-3.5" />
                         Optimized version
                       </h4>
-                      <button 
+                      <button
                         onClick={() => navigator.clipboard.writeText(result.correctedCode)}
                         className="text-[10px] font-black text-zinc-500 hover:text-white uppercase tracking-widest transition-colors"
                       >

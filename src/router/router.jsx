@@ -4,11 +4,13 @@ import CodeAI from "../pages/CodeAI";
 import ConceptSimplifier from "../pages/ConceptSimplifier";
 import Home from "../pages/Home";
 import Notes from "../pages/Notes";
+import DocumentQA from "../pages/DocumentQA";
 
 export const router = createBrowserRouter([
   { path: "/", element: <Home /> },
   { path: "/ask-ai", element: <AskAI /> },
   { path: "/code-ai", element: <CodeAI /> },
   { path: "/concept-simplifier", element: <ConceptSimplifier /> },
+  { path: "/document-qa", element: <DocumentQA /> },
   { path: "/notes", element: <Notes /> },
 ]);
