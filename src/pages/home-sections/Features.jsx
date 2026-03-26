@@ -97,14 +97,16 @@ export default function Features() {
           description: "Intelligent extraction and generation from PDF materials.",
           icon: <FileText className="h-6 w-6 text-purple-600" />,
           color: "from-purple-500 to-transparent",
-          size: "md"
+          size: "md",
+          href: "/document-qa"
         },
         {
           title: "Doc Intelligence",
           description: "Query specific details with high-precision contextual retrieval.",
           icon: <SearchIcon className="h-6 w-6 text-pink-600" />,
           color: "from-pink-500 to-transparent",
-          size: "sm"
+          size: "sm",
+          href: "/document-qa"
         },
         {
           title: "Neural Voice",

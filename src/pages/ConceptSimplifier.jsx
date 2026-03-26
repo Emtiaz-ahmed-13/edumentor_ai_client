@@ -17,6 +17,8 @@ import { useCallback, useEffect, useState } from 'react';
 import Footer from '../components/layout/Footer';
 import Navbar from '../components/layout/Navbar';
 import { deleteConcept, getHistory, simplifyConcept } from '../services/conceptService';
+import { speakText, stopSpeaking } from '../utils/textToSpeech';
+import { AlertCircle, Square, Volume2 } from 'lucide-react';
 
 const formatTimeAgo = (dateString) => {
   const date = new Date(dateString);
@@ -33,28 +35,28 @@ const formatTimeAgo = (dateString) => {
 };
 
 const DIFFICULTY_STYLES = {
-  beginner: { 
-    badge: 'bg-emerald-50 text-emerald-600 border-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20', 
-    dot: 'bg-emerald-500' 
+  beginner: {
+    badge: 'bg-emerald-50 text-emerald-600 border-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20',
+    dot: 'bg-emerald-500'
   },
-  intermediate: { 
-    badge: 'bg-amber-50 text-amber-600 border-amber-100 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/20', 
-    dot: 'bg-amber-500' 
+  intermediate: {
+    badge: 'bg-amber-50 text-amber-600 border-amber-100 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/20',
+    dot: 'bg-amber-500'
   },
-  advanced: { 
-    badge: 'bg-rose-50 text-rose-600 border-rose-100 dark:bg-rose-500/10 dark:text-rose-400 dark:border-rose-500/20', 
-    dot: 'bg-rose-500' 
+  advanced: {
+    badge: 'bg-rose-50 text-rose-600 border-rose-100 dark:bg-rose-500/10 dark:text-rose-400 dark:border-rose-500/20',
+    dot: 'bg-rose-500'
   },
 };
 
 const RESULT_CARDS = [
-  { key: 'explanation',         title: 'Simple Explanation',      icon: <BookOpen className="w-5 h-5 text-indigo-500" />, border: 'border-l-indigo-500', shadow: 'hover:shadow-indigo-500/10', isList: false },
-  { key: 'steps',               title: 'Detailed Steps',          icon: <Zap className="w-5 h-5 text-amber-500" />, border: 'border-l-amber-500', shadow: 'hover:shadow-amber-500/10', isList: true },
-  { key: 'realLifeExample',     title: 'Real-Life Example',       icon: <Globe className="w-5 h-5 text-emerald-500" />, border: 'border-l-emerald-500', shadow: 'hover:shadow-emerald-500/10', isList: false },
-  { key: 'analogy',             title: 'Analogy',                 icon: <Zap className="w-5 h-5 text-purple-500" />, border: 'border-l-purple-500', shadow: 'hover:shadow-purple-500/10', isList: false },
-  { key: 'keyPoints',           title: 'Key Points',              icon: <Target className="w-5 h-5 text-amber-500" />, border: 'border-l-amber-500', shadow: 'hover:shadow-amber-500/10', isList: true },
-  { key: 'funFact',             title: 'Fun Fact',                icon: <Sparkles className="w-5 h-5 text-pink-500" />, border: 'border-l-pink-500', shadow: 'hover:shadow-pink-500/10', isList: false },
-  { key: 'commonMisconception', title: 'Common Misconception',    icon: <HelpCircle className="w-5 h-5 text-rose-500" />, border: 'border-l-rose-500', shadow: 'hover:shadow-rose-500/10', isList: false },
+  { key: 'explanation', title: 'Simple Explanation', icon: <BookOpen className="w-5 h-5 text-indigo-500" />, border: 'border-l-indigo-500', shadow: 'hover:shadow-indigo-500/10', isList: false },
+  { key: 'steps', title: 'Detailed Steps', icon: <Zap className="w-5 h-5 text-amber-500" />, border: 'border-l-amber-500', shadow: 'hover:shadow-amber-500/10', isList: true },
+  { key: 'realLifeExample', title: 'Real-Life Example', icon: <Globe className="w-5 h-5 text-emerald-500" />, border: 'border-l-emerald-500', shadow: 'hover:shadow-emerald-500/10', isList: false },
+  { key: 'analogy', title: 'Analogy', icon: <Zap className="w-5 h-5 text-purple-500" />, border: 'border-l-purple-500', shadow: 'hover:shadow-purple-500/10', isList: false },
+  { key: 'keyPoints', title: 'Key Points', icon: <Target className="w-5 h-5 text-amber-500" />, border: 'border-l-amber-500', shadow: 'hover:shadow-amber-500/10', isList: true },
+  { key: 'funFact', title: 'Fun Fact', icon: <Sparkles className="w-5 h-5 text-pink-500" />, border: 'border-l-pink-500', shadow: 'hover:shadow-pink-500/10', isList: false },
+  { key: 'commonMisconception', title: 'Common Misconception', icon: <HelpCircle className="w-5 h-5 text-rose-500" />, border: 'border-l-rose-500', shadow: 'hover:shadow-rose-500/10', isList: false },
 ];
 
 const EXAMPLE_TOPICS = [
@@ -86,7 +88,7 @@ const CopyButton = ({ textToCopy }) => {
 
   const handleCopy = (e) => {
     e.stopPropagation();
-    navigator.clipboard.writeText(textToCopy).catch(() => {});
+    navigator.clipboard.writeText(textToCopy).catch(() => { });
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -107,15 +109,53 @@ const CopyButton = ({ textToCopy }) => {
 };
 
 const ResultCard = ({ title, content, icon, border, shadow, isList }) => {
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
   if (!content || (Array.isArray(content) && content.length === 0)) return null;
 
   const textToCopy = isList
     ? (Array.isArray(content) ? content.map(item => `• ${item}`).join('\n') : String(content))
     : String(content);
 
+  const handleSpeak = async () => {
+    setIsLoading(true);
+    setIsSpeaking(true);
+    try {
+      await speakText(`${title}. ${textToCopy}`);
+    } catch (err) {
+      console.error("TTS Error:", err);
+    } finally {
+      setIsLoading(false);
+      setIsSpeaking(false);
+    }
+  };
+
+  const handleStop = () => {
+    stopSpeaking();
+    setIsSpeaking(false);
+    setIsLoading(false);
+  };
+
   return (
     <div className={`relative group bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 border-l-4 ${border} rounded-2xl p-6 transition-all duration-300 hover:shadow-xl ${shadow} hover:-translate-y-0.5`}>
-      <CopyButton textToCopy={textToCopy} />
+      <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-200">
+        <button
+          onClick={isSpeaking ? handleStop : handleSpeak}
+          disabled={isLoading && !isSpeaking}
+          className={`p-2 rounded-lg bg-white dark:bg-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-700 border border-zinc-200 dark:border-zinc-700 shadow-sm transition-colors ${isSpeaking ? 'text-primary' : 'text-zinc-400'}`}
+          title={isSpeaking ? "Stop" : "Listen"}
+        >
+          {isLoading ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : isSpeaking ? (
+            <Square className="w-4 h-4 fill-current" />
+          ) : (
+            <Volume2 className="w-4 h-4" />
+          )}
+        </button>
+        <CopyButton textToCopy={textToCopy} />
+      </div>
 
       <h3 className="text-base font-bold text-zinc-900 dark:text-white mb-3 flex items-center gap-2.5">
         <span className="p-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-lg">
@@ -160,11 +200,10 @@ const HistoryItem = ({ concept, isActive, onClick, onDelete }) => {
   return (
     <div
       onClick={() => onClick(concept)}
-      className={`group relative w-full text-left p-3.5 rounded-xl cursor-pointer transition-all duration-300 border ${
-        isActive
+      className={`group relative w-full text-left p-3.5 rounded-xl cursor-pointer transition-all duration-300 border ${isActive
           ? 'bg-indigo-50 border-indigo-200 dark:bg-indigo-500/10 dark:border-indigo-500/30 shadow-sm'
           : 'bg-white dark:bg-zinc-800/50 border-zinc-200 dark:border-zinc-700 hover:border-indigo-300 dark:hover:border-indigo-500/30'
-      }`}
+        }`}
     >
       <div className="flex items-start justify-between gap-2 mb-1.5">
         <p className={`font-bold text-sm leading-snug line-clamp-2 flex-1 ${isActive ? 'text-indigo-600 dark:text-indigo-400' : 'text-zinc-900 dark:text-zinc-100'}`}>
@@ -342,7 +381,7 @@ const ConceptSimplifier = () => {
               {/* Input card */}
               <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 shadow-lg relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 rounded-full blur-3xl -mr-32 -mt-32 pointer-events-none"></div>
-                
+
                 <form onSubmit={handleSubmit} className="space-y-4 relative z-10">
                   {/* Topic input */}
                   <div>
@@ -366,9 +405,9 @@ const ConceptSimplifier = () => {
                     </label>
                     <div className="flex gap-3 flex-wrap">
                       {[
-                        { level: 'beginner',     label: 'Beginner', emoji: '🌱' },
+                        { level: 'beginner', label: 'Beginner', emoji: '🌱' },
                         { level: 'intermediate', label: 'Intermediate', emoji: '🔥' },
-                        { level: 'advanced',     label: 'Advanced', emoji: '🚀' },
+                        { level: 'advanced', label: 'Advanced', emoji: '🚀' },
                       ].map(({ level, label, emoji }) => {
                         const s = DIFFICULTY_STYLES[level];
                         const active = difficultyLevel === level;
@@ -378,11 +417,10 @@ const ConceptSimplifier = () => {
                             type="button"
                             id={`difficulty-${level}`}
                             onClick={() => setDifficultyLevel(level)}
-                            className={`px-6 py-3 rounded-xl border text-sm font-bold transition-all duration-300 flex items-center gap-2 ${
-                              active
+                            className={`px-6 py-3 rounded-xl border text-sm font-bold transition-all duration-300 flex items-center gap-2 ${active
                                 ? 'bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/20 scale-[1.02]'
                                 : 'bg-zinc-50 dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 text-zinc-500 dark:text-zinc-400 hover:border-zinc-300 dark:hover:border-zinc-700'
-                            }`}
+                              }`}
                           >
                             <span>{emoji}</span> {label}
                           </button>
@@ -495,7 +533,7 @@ const ConceptSimplifier = () => {
                       </div>
                       <h3 className="text-2xl font-extrabold text-zinc-900 dark:text-white mb-3">Ready to simplify anything?</h3>
                       <p className="text-zinc-500 dark:text-zinc-400 mb-10 max-w-md mx-auto font-medium">Type any concept above and get an instant, personalized breakdown.</p>
-                      
+
                       <div className="flex gap-2 justify-center flex-wrap">
                         {EXAMPLE_TOPICS.map((example) => (
                           <button
