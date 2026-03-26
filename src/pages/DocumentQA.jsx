@@ -58,14 +58,40 @@ const DIFFICULTY_LEVELS = [
 
 // ─── Structured AI Message Renderer ───────────────────────────────────────────
 
-function StructuredAIMessage({ data }) {
+function StructuredAIMessage({ data, onSpeak, onStop, isSpeaking, isTtsLoading }) {
   const { explanation, sourceSnippet, keyPoints, relevanceScore } = data;
 
   return (
     <div className="space-y-4 text-sm leading-relaxed">
-      {explanation && (
-        <p className="text-foreground/90 font-medium leading-relaxed">{explanation}</p>
-      )}
+      <div className="flex justify-between items-start gap-4">
+        {explanation && (
+          <p className="text-foreground/90 font-medium leading-relaxed flex-1">{explanation}</p>
+        )}
+        <div className="flex-shrink-0 pt-1">
+          {isSpeaking ? (
+            <button
+              onClick={onStop}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-[9px] font-bold rounded-full border border-rose-200 dark:border-rose-900/30 bg-rose-50 dark:bg-rose-500/10 text-rose-500 transition-all"
+            >
+              <Square className="w-3 h-3 fill-current" />
+              Stop
+            </button>
+          ) : (
+            <button
+              onClick={() => onSpeak(explanation)}
+              disabled={isTtsLoading}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-[9px] font-bold rounded-full border border-zinc-100 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-500 hover:text-primary hover:border-primary/40 transition-all disabled:opacity-50"
+            >
+              {isTtsLoading ? (
+                <Loader2 className="w-3 h-3 animate-spin" />
+              ) : (
+                <Volume2 className="w-3 h-3" />
+              )}
+              Listen
+            </button>
+          )}
+        </div>
+      </div>
 
       {sourceSnippet && (
         <div className="rounded-2xl border border-primary/20 bg-primary/5 p-5 shadow-sm">
@@ -97,7 +123,7 @@ function StructuredAIMessage({ data }) {
       )}
 
       {relevanceScore !== undefined && (
-        <div className="flex items-center gap-2 pt-2">
+        <div className="flex items-center gap-2 pt-2 border-t border-zinc-100 dark:border-zinc-800/50 mt-4">
             <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Relevance:</span>
             <div className="flex-1 max-w-24 h-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden">
                 <div 
@@ -128,9 +154,30 @@ export default function DocumentQA() {
   const [documentContext, setDocumentContext] = useState("");
   const [fileName, setFileName] = useState("");
   const [isUploading, setIsUploading] = useState(false);
+  const [speakingIdx, setSpeakingIdx] = useState(null);
+  const [ttsLoading, setTtsLoading] = useState(false);
   
   const scrollRef = useRef(null);
   const fileInputRef = useRef(null);
+
+  const handleSpeak = async (text, id) => {
+    setSpeakingIdx(id);
+    setTtsLoading(true);
+    try {
+      await speakText(text);
+    } catch (err) {
+      console.error("TTS Error:", err);
+    } finally {
+      setSpeakingIdx(null);
+      setTtsLoading(false);
+    }
+  };
+
+  const handleStop = () => {
+    stopSpeaking();
+    setSpeakingIdx(null);
+    setTtsLoading(false);
+  };
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -311,7 +358,13 @@ export default function DocumentQA() {
                   {msg.role === "user" || typeof msg.content === "string" ? (
                     <span className="whitespace-pre-wrap font-medium">{msg.content}</span>
                   ) : (
-                    <StructuredAIMessage data={msg.content} />
+                    <StructuredAIMessage 
+                        data={msg.content} 
+                        onSpeak={(text) => handleSpeak(text, idx)}
+                        onStop={handleStop}
+                        isSpeaking={speakingIdx === idx}
+                        isTtsLoading={ttsLoading && speakingIdx === idx}
+                    />
                   )}
                 </div>
               </div>
