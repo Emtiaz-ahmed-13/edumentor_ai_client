@@ -9,11 +9,11 @@ export default function Stats() {
   ];
 
   return (
-    <section className="py-20 border-y border-border bg-white dark:bg-zinc-950">
-      <div className="container mx-auto px-4">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 text-center divide-x divide-border/50">
+    <section className="py-10 border-y border-border bg-white dark:bg-zinc-950">
+      <div className="container mx-auto px-4 max-w-6xl">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 text-center divide-x divide-border/50">
           {stats.map((stat, index) => (
-            <div key={index} className="flex flex-col items-center justify-center space-y-2">
+            <div key={index} className="flex flex-col items-center justify-center space-y-1">
               <div className="p-3 bg-muted/50 rounded-full mb-2">
                 {stat.icon}
               </div>

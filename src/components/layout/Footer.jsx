@@ -3,12 +3,12 @@ import { Link } from "react-router";
 
 export default function Footer() {
   return (
-    <footer className="bg-zinc-50 dark:bg-zinc-950 border-t pt-16 pb-8">
-      <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+    <footer className="bg-zinc-50 dark:bg-zinc-950 border-t pt-10 pb-6">
+      <div className="container mx-auto px-4 max-w-6xl">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           {/* Brand */}
           <div className="md:col-span-1">
-            <Link to="/" className="flex items-center gap-2 mb-4">
+            <Link to="/" className="flex items-center gap-2 mb-3">
               <div className="bg-primary text-primary-foreground p-1.5 rounded-lg">
                 <Brain className="w-5 h-5" />
               </div>
@@ -16,7 +16,7 @@ export default function Footer() {
                 EduMentor AI
               </span>
             </Link>
-            <p className="text-muted-foreground text-sm mb-6 leading-relaxed">
+            <p className="text-muted-foreground text-sm mb-4 leading-relaxed">
               Empowering students and educators with adaptive, AI-driven learning tools that personalize the educational journey.
             </p>
             <div className="flex gap-4">
@@ -34,8 +34,8 @@ export default function Footer() {
 
           {/* Links Group 1 */}
           <div>
-            <h3 className="font-semibold mb-4 text-foreground">Product</h3>
-            <ul className="space-y-3">
+            <h3 className="font-semibold mb-2 text-foreground">Product</h3>
+            <ul className="space-y-1.5">
               <li><a href="#features" className="text-sm text-muted-foreground hover:text-primary transition-colors">Features</a></li>
               <li><a href="#how-it-works" className="text-sm text-muted-foreground hover:text-primary transition-colors">How it Works</a></li>
               <li><a href="#pricing" className="text-sm text-muted-foreground hover:text-primary transition-colors">Pricing</a></li>
@@ -45,8 +45,8 @@ export default function Footer() {
 
           {/* Links Group 2 */}
           <div>
-            <h3 className="font-semibold mb-4 text-foreground">Resources</h3>
-            <ul className="space-y-3">
+            <h3 className="font-semibold mb-2 text-foreground">Resources</h3>
+            <ul className="space-y-1.5">
               <li><a href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">Blog</a></li>
               <li><a href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">Help Center</a></li>
               <li><a href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">Documentation</a></li>
@@ -56,8 +56,8 @@ export default function Footer() {
 
           {/* Links Group 3 */}
           <div>
-            <h3 className="font-semibold mb-4 text-foreground">Company</h3>
-            <ul className="space-y-3">
+            <h3 className="font-semibold mb-2 text-foreground">Company</h3>
+            <ul className="space-y-1.5">
               <li><a href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">About Us</a></li>
               <li><a href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">Careers</a></li>
               <li><a href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">Privacy Policy</a></li>
@@ -66,7 +66,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="pt-6 border-t border-border flex flex-col md:flex-row justify-between items-center gap-3">
           <p className="text-sm text-muted-foreground">
             © {new Date().getFullYear()} EduMentor AI. All rights reserved.
           </p>
