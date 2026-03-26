@@ -26,6 +26,7 @@ export default function Navbar() {
     { name: "Concept Simplifier", href: "/concept-simplifier", isInternal: true },
     { name: "Ask AI", href: "/ask-ai", isInternal: true },
     { name: "Code Optimizer", href: "/code-ai", isInternal: true },
+    { name: "Voice Assistant", href: "/voice", isInternal: true },
     { name: "Features", href: "#features" },
     { name: "How it Works", href: "#how-it-works" },
     { name: "Pricing", href: "#pricing" },

@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { useState } from 'react'
+import VoiceChat_5 from './components/VoiceChat_5'
 import './App.css'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
@@ -22,10 +23,9 @@ function App() {
         <Button onClick={() => setCount((count) => count + 1)}>
           count is {count}
         </Button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
       </div>
+
+      <VoiceChat_5 />
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>
