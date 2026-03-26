@@ -14,40 +14,43 @@ import {
   RefreshCcw,
   Send,
   Sparkles,
+  Square,
   User,
+  Volume2,
   Zap,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import aiService from "../api/ai.service";
 import Footer from "../components/layout/Footer";
 import Navbar from "../components/layout/Navbar";
+import { speakText, stopSpeaking } from "../utils/textToSpeech";
 
 // ─── Constants ──────────────────────────────────────────────────────────────
 
 const DIFFICULTY_LEVELS = [
-  { 
-    id: 'beginner', 
-    label: 'Beginner', 
-    icon: Zap, 
-    color: 'text-emerald-500', 
-    bg: 'bg-emerald-50 dark:bg-emerald-500/10', 
-    border: 'border-emerald-100 dark:border-emerald-500/20' 
+  {
+    id: 'beginner',
+    label: 'Beginner',
+    icon: Zap,
+    color: 'text-emerald-500',
+    bg: 'bg-emerald-50 dark:bg-emerald-500/10',
+    border: 'border-emerald-100 dark:border-emerald-500/20'
   },
-  { 
-    id: 'intermediate', 
-    label: 'Intermediate', 
-    icon: Cpu, 
-    color: 'text-blue-500', 
-    bg: 'bg-blue-50 dark:bg-blue-500/10', 
-    border: 'border-blue-100 dark:border-blue-500/20' 
+  {
+    id: 'intermediate',
+    label: 'Intermediate',
+    icon: Cpu,
+    color: 'text-blue-500',
+    bg: 'bg-blue-50 dark:bg-blue-500/10',
+    border: 'border-blue-100 dark:border-blue-500/20'
   },
-  { 
-    id: 'advanced', 
-    label: 'Advanced', 
-    icon: GraduationCap, 
-    color: 'text-purple-500', 
-    bg: 'bg-purple-50 dark:bg-purple-500/10', 
-    border: 'border-purple-100 dark:border-purple-500/20' 
+  {
+    id: 'advanced',
+    label: 'Advanced',
+    icon: GraduationCap,
+    color: 'text-purple-500',
+    bg: 'bg-purple-50 dark:bg-purple-500/10',
+    border: 'border-purple-100 dark:border-purple-500/20'
   },
 ];
 
@@ -165,6 +168,20 @@ function StructuredAIMessage({ data, onFollowUp }) {
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
 /**
+ * Converts a chat message into a plain-text string suitable for TTS.
+ * For structured AI responses, concatenates explanation + steps + key points.
+ */
+function buildTTSText(msg) {
+  if (typeof msg.content === "string") return msg.content;
+  const { explanation = "", steps = [], keyPoints = [] } = msg.content || {};
+  const stepsText = steps
+    .map((s, i) => `Step ${i + 1}: ${s.replace(/^step\s*\d+[:.]\s*/i, "")}`)
+    .join(". ");
+  const kpText = keyPoints.join(". ");
+  return [explanation, stepsText, kpText].filter(Boolean).join(". ");
+}
+
+/**
  * Converts chat history into a plain-text-only array suitable for sending
  * to the API (structured AI messages are serialised to a text summary).
  */
@@ -195,6 +212,9 @@ export default function AskAI() {
   ]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [speakingIdx, setSpeakingIdx] = useState(null);
+  const [ttsLoading, setTtsLoading] = useState(false);
+  const [ttsError, setTtsError] = useState("");
   const scrollRef = useRef(null);
 
   useEffect(() => {
@@ -263,13 +283,13 @@ export default function AskAI() {
             </span>
           </div>
         )}
-        <StructuredAIMessage 
-          data={msg.content} 
+        <StructuredAIMessage
+          data={msg.content}
           onFollowUp={(q) => {
             setQuestion(q);
             // We can't call handleSend directly easily because it's an async event handler,
             // but we can set the question and the user just clicks send, or we trigger it.
-          }} 
+          }}
         />
       </div>
     );
@@ -284,7 +304,7 @@ export default function AskAI() {
       <main className="flex-1 flex flex-col pt-20 pb-6 container mx-auto px-4 max-w-4xl">
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6 animate-in fade-in slide-in-from-top-4 duration-700">
-           <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4">
             <div className="bg-primary text-primary-foreground p-3 rounded-2xl shadow-xl shadow-primary/20 rotate-3 transition-transform hover:rotate-0">
               <Brain className="w-7 h-7" />
             </div>
@@ -298,7 +318,7 @@ export default function AskAI() {
           </div>
 
           {/* Difficulty Selector */}
-           <div className="bg-white dark:bg-zinc-900 p-1.5 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm flex gap-1">
+          <div className="bg-white dark:bg-zinc-900 p-1.5 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm flex gap-1">
             {DIFFICULTY_LEVELS.map((level) => {
               const Icon = level.icon;
               const isActive = difficulty === level.id;
@@ -306,11 +326,10 @@ export default function AskAI() {
                 <button
                   key={level.id}
                   onClick={() => setDifficulty(level.id)}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-xl border-2 transition-all duration-300 ${
-                    isActive 
-                      ? `${level.border} ${level.bg} scale-[1.05] shadow-sm` 
+                  className={`flex items-center gap-2 px-3 py-2 rounded-xl border-2 transition-all duration-300 ${isActive
+                      ? `${level.border} ${level.bg} scale-[1.05] shadow-sm`
                       : 'border-transparent text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300'
-                  }`}
+                    }`}
                 >
                   <Icon className={`w-3.5 h-3.5 ${isActive ? level.color : 'text-zinc-400'}`} />
                   <span className={`text-[10px] font-black uppercase tracking-widest ${isActive ? 'text-zinc-900 dark:text-white' : ''}`}>
@@ -326,7 +345,7 @@ export default function AskAI() {
         <div className="flex-1 bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-xl overflow-hidden flex flex-col relative">
           {/* Subtle Background Accent */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-[100px] -mr-32 -mt-32 pointer-events-none" />
-          
+
           <div
             ref={scrollRef}
             className="flex-1 overflow-y-auto p-5 md:p-6 space-y-6 scroll-smooth custom-scrollbar relative z-10"
@@ -339,11 +358,10 @@ export default function AskAI() {
               >
                 {/* Avatar */}
                 <div
-                  className={`w-10 h-10 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg ${
-                    msg.role === "user"
+                  className={`w-10 h-10 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg ${msg.role === "user"
                       ? "bg-zinc-900 dark:bg-primary text-white dark:text-primary-foreground rotate-3"
                       : "bg-white dark:bg-zinc-800 text-primary border border-zinc-100 dark:border-zinc-700 -rotate-3"
-                  }`}
+                    }`}
                 >
                   {msg.role === "user" ? (
                     <User className="w-5 h-5" />
@@ -354,18 +372,75 @@ export default function AskAI() {
 
                 {/* Bubble */}
                 <div
-                  className={`max-w-[85%] p-5 rounded-3xl text-sm leading-relaxed shadow-sm ${
-                    msg.role === "user"
+                  className={`max-w-[85%] p-5 rounded-3xl text-sm leading-relaxed shadow-sm ${msg.role === "user"
                       ? "bg-zinc-900 dark:bg-primary text-white rounded-tr-none"
                       : "bg-zinc-50 dark:bg-zinc-800/40 text-foreground rounded-tl-none border border-zinc-100 dark:border-zinc-800"
-                  }`}
+                    }`}
                 >
                   {renderMessageContent(msg)}
+                  {/* TTS controls – only on AI messages */}
+                  {msg.role === "assistant" && (
+                    <div className="flex gap-2 mt-3">
+                      <button
+                        onClick={async () => {
+                          const text = buildTTSText(msg);
+                          setSpeakingIdx(idx);
+                          setTtsLoading(true);
+                          setTtsError("");
+                          try {
+                            await speakText(text);
+                          } catch (err) {
+                            console.error("TTS Error:", err);
+                            setTtsError("Speech synthesis failed. Please try again.");
+                          } finally {
+                            setSpeakingIdx(null);
+                            setTtsLoading(false);
+                          }
+                        }}
+                        disabled={speakingIdx === idx && ttsLoading}
+                        title="Listen"
+                        className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-bold rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-500 hover:text-primary hover:border-primary/40 transition-all disabled:opacity-50"
+                      >
+                        {speakingIdx === idx && ttsLoading ? (
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        ) : (
+                          <Volume2 className="w-3.5 h-3.5" />
+                        )}
+                        Listen
+                      </button>
+                      <button
+                        onClick={() => {
+                          stopSpeaking();
+                          setSpeakingIdx(null);
+                          setTtsLoading(false);
+                        }}
+                        title="Stop"
+                        className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-bold rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-500 hover:text-rose-500 hover:border-rose-400/40 transition-all"
+                      >
+                        <Square className="w-3.5 h-3.5" />
+                        Stop
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
 
-            {/* Error Message */}
+            {/* TTS Error Message */}
+            {ttsError && (
+              <div className="flex items-center gap-3 p-4 bg-amber-50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20 rounded-2xl text-amber-600 dark:text-amber-400 text-xs font-bold animate-in fade-in duration-300">
+                <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                <span>{ttsError}</span>
+                <button 
+                  onClick={() => setTtsError("")}
+                  className="ml-auto text-amber-500 hover:text-amber-700"
+                >
+                  <Square className="w-3 h-3 fill-current" />
+                </button>
+              </div>
+            )}
+
+            {/* AI Error Message */}
             {error && (
               <div className="flex items-center gap-3 p-4 bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 rounded-2xl text-rose-600 dark:text-rose-400 text-xs font-bold animate-pulse">
                 <AlertCircle className="w-4 h-4 flex-shrink-0" />
@@ -397,7 +472,7 @@ export default function AskAI() {
                 <div className="absolute inset-0 bg-primary/5 rounded-2xl blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity pointer-events-none" />
                 <textarea
                   value={question}
-                  onChange={(e) => setQuestion(e.target.value)}
+                  onChange={(e) => setQuestion(e.target.value)} 
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' && !e.shiftKey) {
                       e.preventDefault();
@@ -423,7 +498,7 @@ export default function AskAI() {
               </div>
             </form>
             <div className="flex items-center justify-between mt-3 px-2">
-               <p className="text-[10px] text-zinc-400 font-black uppercase tracking-[0.2em]">
+              <p className="text-[10px] text-zinc-400 font-black uppercase tracking-[0.2em]">
                 EduMentor AI Tutor · {difficulty} Mode
               </p>
               <div className="flex items-center gap-1.5">
