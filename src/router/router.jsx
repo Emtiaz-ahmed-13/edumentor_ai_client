@@ -4,7 +4,7 @@ import CodeAI from "../pages/CodeAI";
 import ConceptSimplifier from "../pages/ConceptSimplifier";
 import Home from "../pages/Home";
 import Notes from "../pages/Notes";
-import DocumentQA from "../pages/DocumentQA";
+import VoiceChat_5 from "../components/VoiceChat_5";
 
 export const router = createBrowserRouter([
   { path: "/", element: <Home /> },
@@ -13,4 +13,5 @@ export const router = createBrowserRouter([
   { path: "/concept-simplifier", element: <ConceptSimplifier /> },
   { path: "/document-qa", element: <DocumentQA /> },
   { path: "/notes", element: <Notes /> },
+  { path: "/voice", element: <VoiceChat_5 /> },
 ]);

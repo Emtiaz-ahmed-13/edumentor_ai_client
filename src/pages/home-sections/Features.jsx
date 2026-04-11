@@ -120,7 +120,8 @@ export default function Features() {
           description: "Advanced speech-to-text for intuitive question phrasing.",
           icon: <Mic className="h-6 w-6 text-fuchsia-600" />,
           color: "from-fuchsia-500 to-transparent",
-          size: "sm"
+          size: "sm",
+          href: "/voice"
         }
       ]
     },
