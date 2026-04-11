@@ -11,6 +11,7 @@ export const router = createBrowserRouter([
   { path: "/ask-ai", element: <AskAI /> },
   { path: "/code-ai", element: <CodeAI /> },
   { path: "/concept-simplifier", element: <ConceptSimplifier /> },
+  { path: "/document-qa", element: <DocumentQA /> },
   { path: "/notes", element: <Notes /> },
   { path: "/voice", element: <VoiceChat_5 /> },
 ]);

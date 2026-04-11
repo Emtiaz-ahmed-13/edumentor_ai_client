@@ -14,11 +14,15 @@ import {
   CheckCircle2,
   MessageSquare,
   Sparkles,
+  Bot,
+  Square,
+  Volume2,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import noteService from "../api/note.service";
 import Footer from "../components/layout/Footer";
 import Navbar from "../components/layout/Navbar";
+import { speakText, stopSpeaking } from "../utils/textToSpeech";
 
 export default function Notes() {
   const [file, setFile] = useState(null);
@@ -29,6 +33,27 @@ export default function Notes() {
   const [qaQuestion, setQaQuestion] = useState("");
   const [qaLoading, setQaLoading] = useState(false);
   const [qaHistory, setQaHistory] = useState([]);
+  const [speakingIdx, setSpeakingIdx] = useState(null);
+  const [ttsLoading, setTtsLoading] = useState(false);
+
+  const handleSpeak = async (text, id) => {
+    setSpeakingIdx(id);
+    setTtsLoading(true);
+    try {
+      await speakText(text);
+    } catch (err) {
+      console.error("TTS Error:", err);
+    } finally {
+      setSpeakingIdx(null);
+      setTtsLoading(false);
+    }
+  };
+
+  const handleStop = () => {
+    stopSpeaking();
+    setSpeakingIdx(null);
+    setTtsLoading(false);
+  };
   
   const { getToken } = useAuth();
   const chatEndRef = useRef(null);
@@ -151,6 +176,28 @@ export default function Notes() {
                 </div>
               </div>
               <div className="flex gap-2">
+                {speakingIdx === 'summary' ? (
+                  <button
+                    onClick={handleStop}
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-[9px] font-bold rounded-full border border-rose-200 dark:border-rose-900/30 bg-rose-50 dark:bg-rose-500/10 text-rose-500 transition-all"
+                  >
+                    <Square className="w-3 h-3 fill-current" />
+                    Stop
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => handleSpeak(summary.overview, 'summary')}
+                    disabled={ttsLoading}
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-[9px] font-bold rounded-full border border-zinc-100 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-500 hover:text-primary hover:border-primary/40 transition-all disabled:opacity-50"
+                  >
+                    {speakingIdx === 'summary' && ttsLoading ? (
+                      <Loader2 className="w-3 h-3 animate-spin" />
+                    ) : (
+                      <Volume2 className="w-3 h-3" />
+                    )}
+                    Listen Overview
+                  </button>
+                )}
                 <div className="px-3 py-1.5 bg-zinc-50 dark:bg-zinc-800 rounded-full border border-zinc-100 dark:border-zinc-700 flex items-center gap-2">
                   <BookOpen className="w-3.5 h-3.5 text-zinc-400" />
                   <span className="text-[9px] font-bold text-zinc-500 uppercase">{pageCount || 0} Pages</span>
@@ -286,12 +333,34 @@ export default function Notes() {
                 )}
                 {qaHistory.map((msg, i) => (
                   <div key={i} className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
-                    <div className={`max-w-[90%] p-4 rounded-2xl text-[11px] font-medium leading-relaxed ${
+                    <div className={`max-w-[90%] p-4 rounded-2xl text-[11px] font-medium leading-relaxed relative group/msg ${
                       msg.role === 'user' 
                         ? 'bg-primary text-white rounded-tr-none' 
                         : 'bg-zinc-800 text-zinc-200 rounded-tl-none border border-zinc-700'
                     }`}>
                       {msg.content}
+                      {msg.role === 'assistant' && (
+                        <div className="mt-2 flex gap-2 border-t border-zinc-700/50 pt-2 opacity-0 group-hover/msg:opacity-100 transition-opacity">
+                          {speakingIdx === `chat-${i}` ? (
+                            <button
+                              onClick={handleStop}
+                              className="flex items-center gap-1 text-[8px] font-black uppercase tracking-widest text-rose-400 hover:text-rose-300"
+                            >
+                              <Square className="w-2.5 h-2.5 fill-current" />
+                              Stop
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => handleSpeak(msg.content, `chat-${i}`)}
+                              disabled={ttsLoading}
+                              className="flex items-center gap-1 text-[8px] font-black uppercase tracking-widest text-zinc-400 hover:text-primary transition-colors disabled:opacity-30"
+                            >
+                              <Volume2 className="w-2.5 h-2.5" />
+                              Listen
+                            </button>
+                          )}
+                        </div>
+                      )}
                     </div>
                     {msg.relevantSection && (
                       <div className="mt-2 p-3 bg-zinc-900 rounded-xl border border-zinc-800 text-[9px] text-zinc-500 italic">
@@ -539,26 +608,3 @@ export default function Notes() {
   );
 }
 
-function Bot(props) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M12 8V4H8" />
-      <rect width="16" height="12" x="4" y="8" rx="2" />
-      <path d="M2 14h2" />
-      <path d="M20 14h2" />
-      <path d="M15 13v2" />
-      <path d="M9 13v2" />
-    </svg>
-  );
-}
