@@ -5,6 +5,8 @@ import ConceptSimplifier from "../pages/ConceptSimplifier";
 import Home from "../pages/Home";
 import Notes from "../pages/Notes";
 import DocumentQA from "../pages/DocumentQA";
+import SkillGapDetection from "../pages/SkillGapDetection";
+import StudyModes from "../pages/StudyModes";
 
 export const router = createBrowserRouter([
   { path: "/", element: <Home /> },
@@ -13,4 +15,6 @@ export const router = createBrowserRouter([
   { path: "/concept-simplifier", element: <ConceptSimplifier /> },
   { path: "/document-qa", element: <DocumentQA /> },
   { path: "/notes", element: <Notes /> },
+  { path: "/skill-gap", element: <SkillGapDetection /> },
+  { path: "/study-modes", element: <StudyModes /> },
 ]);

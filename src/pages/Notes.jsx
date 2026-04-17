@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import noteService from "../api/note.service";
+import quizService from "../api/quiz.service";
 import Footer from "../components/layout/Footer";
 import Navbar from "../components/layout/Navbar";
 import { speakText, stopSpeaking } from "../utils/textToSpeech";
@@ -35,6 +36,9 @@ export default function Notes() {
   const [qaHistory, setQaHistory] = useState([]);
   const [speakingIdx, setSpeakingIdx] = useState(null);
   const [ttsLoading, setTtsLoading] = useState(false);
+  const [selectedAnswers, setSelectedAnswers] = useState({});
+  const [quizSubmitted, setQuizSubmitted] = useState(false);
+  const [isSubmittingQuiz, setIsSubmittingQuiz] = useState(false);
 
   const handleSpeak = async (text, id) => {
     setSpeakingIdx(id);
@@ -156,6 +160,56 @@ export default function Notes() {
     }
   };
 
+  const handleOptionSelect = (questionIdx, option) => {
+    if (quizSubmitted) return;
+    setSelectedAnswers((prev) => ({
+      ...prev,
+      [questionIdx]: option,
+    }));
+  };
+
+  const handleSubmitQuiz = async () => {
+    if (isSubmittingQuiz || quizSubmitted || !selectedNote) return;
+
+    setIsSubmittingQuiz(true);
+    try {
+      const token = await getToken();
+      const mcqs = selectedNote.summary.examQuestions.mcq;
+      
+      let score = 0;
+      const wrongAnswers = [];
+
+      mcqs.forEach((q, i) => {
+        const userAns = selectedAnswers[i];
+        if (userAns === q.answer) {
+          score++;
+        } else {
+          wrongAnswers.push({
+            question: q.question,
+            userAnswer: userAns || "No answer",
+            correctAnswer: q.answer,
+          });
+        }
+      });
+
+      const payload = {
+        noteId: selectedNote._id,
+        subject: selectedNote.summary.subject || "General",
+        score,
+        totalQuestions: mcqs.length,
+        wrongAnswers,
+      };
+
+      await quizService.submitQuiz(payload, token);
+      setQuizSubmitted(true);
+    } catch (err) {
+      console.error("Quiz Submission Error:", err);
+      setError("Failed to submit quiz results.");
+    } finally {
+      setIsSubmittingQuiz(false);
+    }
+  };
+
   const renderSummary = (note) => {
     const { summary, pageCount, wordCount } = note;
     if (!summary) return null;
@@ -270,25 +324,85 @@ export default function Notes() {
               Exam Preparation (MCQs)
             </h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {summary.examQuestions?.mcq?.map((q, i) => (
-                <div key={i} className="bg-amber-50/50 dark:bg-amber-500/5 border border-amber-100 dark:border-amber-500/10 p-6 rounded-3xl space-y-4">
-                  <div className="flex gap-3">
-                    <span className="text-amber-500 font-black text-xs">Q{i+1}:</span>
-                    <p className="text-xs font-bold text-zinc-800 dark:text-zinc-200">{q.question}</p>
-                  </div>
-                  <div className="grid grid-cols-1 gap-2">
-                    {q.options?.map((opt, idx) => (
-                      <div key={idx} className="bg-white dark:bg-zinc-950 px-3 py-2 rounded-xl border border-amber-200/20 text-[10px] font-medium text-zinc-600 dark:text-zinc-400">
-                        {opt}
+              {summary.examQuestions?.mcq?.map((q, i) => {
+                const isSelected = selectedAnswers[i] !== undefined;
+                const isCorrect = selectedAnswers[i] === q.answer;
+                
+                return (
+                  <div key={i} className={`bg-amber-50/50 dark:bg-amber-500/5 border ${quizSubmitted ? (isCorrect ? 'border-emerald-500/30 bg-emerald-500/5' : 'border-rose-500/30 bg-rose-500/5') : 'border-amber-100 dark:border-amber-500/10'} p-6 rounded-3xl space-y-4 transition-all duration-300`}>
+                    <div className="flex gap-3">
+                      <span className="text-amber-500 font-black text-xs">Q{i+1}:</span>
+                      <p className="text-xs font-bold text-zinc-800 dark:text-zinc-200">{q.question}</p>
+                    </div>
+                    <div className="grid grid-cols-1 gap-2">
+                      {q.options?.map((opt, idx) => {
+                        const isOptionSelected = selectedAnswers[i] === opt;
+                        const isThisCorrectOption = opt === q.answer;
+
+                        return (
+                          <button
+                            key={idx}
+                            disabled={quizSubmitted}
+                            onClick={() => handleOptionSelect(i, opt)}
+                            className={`text-left px-3 py-2 rounded-xl border transition-all ${
+                              quizSubmitted 
+                                ? (isThisCorrectOption ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-700' : (isOptionSelected ? 'bg-rose-500/20 border-rose-500/50 text-rose-700' : 'bg-white dark:bg-zinc-950 border-zinc-100 dark:border-zinc-800 opacity-50'))
+                                : (isOptionSelected ? 'bg-primary/10 border-primary text-primary' : 'bg-white dark:bg-zinc-950 border-zinc-100 dark:border-zinc-800 hover:border-primary/40')
+                            } text-[10px] font-medium`}
+                          >
+                            {opt}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    {quizSubmitted && (
+                      <div className={`pt-2 border-t ${isCorrect ? 'border-emerald-500/20' : 'border-rose-500/20'}`}>
+                        <p className={`text-[9px] font-black uppercase tracking-widest ${isCorrect ? 'text-emerald-600' : 'text-rose-600'}`}>
+                          {isCorrect ? 'Correct!' : `Correct: ${q.answer}`}
+                        </p>
+                        {!isCorrect && q.explanation && (
+                          <p className="text-[9px] text-zinc-500 mt-1 font-medium">{q.explanation}</p>
+                        )}
                       </div>
-                    ))}
+                    )}
                   </div>
-                  <div className="pt-2 border-t border-amber-200/20">
-                    <p className="text-[9px] font-black uppercase tracking-widest text-emerald-600">Correct: {q.answer}</p>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
+
+            {summary.examQuestions?.mcq?.length > 0 && !quizSubmitted && (
+              <div className="flex justify-center pt-4">
+                <button
+                  onClick={handleSubmitQuiz}
+                  disabled={isSubmittingQuiz || Object.keys(selectedAnswers).length < summary.examQuestions.mcq.length}
+                  className="px-8 py-3 bg-zinc-900 dark:bg-primary text-white dark:text-primary-foreground rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] hover:scale-105 active:scale-95 transition-all shadow-xl shadow-primary/20 disabled:opacity-50 flex items-center gap-2"
+                >
+                  {isSubmittingQuiz ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      Analyzing...
+                    </>
+                  ) : (
+                    <>
+                      <ClipboardCheck className="w-4 h-4" />
+                      Complete Assessment
+                    </>
+                  )}
+                </button>
+              </div>
+            )}
+
+            {quizSubmitted && (
+              <div className="bg-emerald-50 dark:bg-emerald-500/5 border border-emerald-100 dark:border-emerald-500/10 p-6 rounded-3xl text-center">
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <Sparkles className="w-5 h-5 text-amber-500" />
+                  <h5 className="text-emerald-900 dark:text-emerald-400 font-black uppercase text-sm tracking-widest">Assessment Complete</h5>
+                </div>
+                <p className="text-xs text-emerald-800/70 dark:text-emerald-400/60 font-medium">
+                  Your results have been analyzed. Check the <span className="font-bold text-emerald-600 cursor-pointer underline hover:text-emerald-500">Analytics Tab</span> (Skill Gap Detection) to see your weak areas.
+                </p>
+              </div>
+            )}
 
             <h4 className="text-xs font-black uppercase tracking-[0.2em] text-zinc-400 flex items-center gap-2 px-2 pt-4">
               <FileText className="w-4 h-4 text-blue-500" />
