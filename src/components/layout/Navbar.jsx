@@ -22,8 +22,9 @@ export default function Navbar() {
   }, []);
 
   const navLinks = [
-    { name: "Note Summarizer", href: "/notes", isInternal: true },
-    { name: "Document IQ", href: "/document-qa", isInternal: true },
+    { name: "Smart Study Notes", href: "/notes", isInternal: true },
+    { name: "AI Quiz", href: "/quiz", isInternal: true },
+    { name: "Voice Chat", href: "/voice-chat", isInternal: true },
     { name: "Concept Simplifier", href: "/concept-simplifier", isInternal: true },
     { name: "Ask AI", href: "/ask-ai", isInternal: true },
     { name: "Code Optimizer", href: "/code-ai", isInternal: true },

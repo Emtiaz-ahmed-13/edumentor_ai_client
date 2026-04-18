@@ -19,4 +19,5 @@ export const router = createBrowserRouter([
   { path: "/notes", element: <Notes /> },
   { path: "/quiz", element: <QuizGenerator /> },
   { path: "/voice", element: <VoiceChat_5 /> },
+  { path: "/voice-chat", element: <VoiceChat_5 /> },
 ]);
