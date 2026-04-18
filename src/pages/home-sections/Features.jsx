@@ -176,14 +176,16 @@ export default function Features() {
           description: "Track velocity, accuracy, and overall growth metrics.",
           icon: <BarChart3 className="h-6 w-6 text-blue-600" />,
           color: "from-blue-400 to-transparent",
-          size: "sm"
+          size: "sm",
+          href: "/analytics"
         },
         {
           title: "Goal Coaching",
           description: "Personal milestones and productivity index monitoring.",
           icon: <Target className="h-6 w-6 text-indigo-600" />,
           color: "from-indigo-400 to-transparent",
-          size: "sm"
+          size: "sm",
+          href: "/goals"
         }
       ]
     }

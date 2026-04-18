@@ -5,6 +5,9 @@ import ConceptSimplifier from "../pages/ConceptSimplifier";
 import Home from "../pages/Home";
 import Notes from "../pages/Notes";
 import VoiceChat_5 from "../components/VoiceChat_5";
+import LearningAnalytics from "../pages/LearningAnalytics";
+import GoalTracking from "../pages/GoalTracking";
+import DocumentQA from "../pages/DocumentQA";
 
 export const router = createBrowserRouter([
   { path: "/", element: <Home /> },
@@ -14,4 +17,6 @@ export const router = createBrowserRouter([
   { path: "/document-qa", element: <DocumentQA /> },
   { path: "/notes", element: <Notes /> },
   { path: "/voice", element: <VoiceChat_5 /> },
+  { path: "/analytics", element: <LearningAnalytics /> },
+  { path: "/goals", element: <GoalTracking /> },
 ]);
