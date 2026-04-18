@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Target, PlusCircle, PlayCircle, PauseCircle, FileText, Clock, Flame, Sparkles, Zap, BrainCircuit, AlertCircle, Activity } from 'lucide-react';
 import { Link } from 'react-router';
 
-const API_BASE = "http://localhost:9525/api/v1";
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api/v1";
 
 export default function GoalTracking() {
   const [goals, setGoals] = useState([]);

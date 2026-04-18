@@ -6,11 +6,9 @@ import ConceptSimplifier from "../pages/ConceptSimplifier";
 import DocumentQA from "../pages/DocumentQA";
 import Home from "../pages/Home";
 import Notes from "../pages/Notes";
-import QuizGenerator from "../pages/QuizGenerator";
-import VoiceChat_5 from "../components/VoiceChat_5";
-import LearningAnalytics from "../pages/LearningAnalytics";
 import GoalTracking from "../pages/GoalTracking";
-import DocumentQA from "../pages/DocumentQA";
+import LearningAnalytics from "../pages/LearningAnalytics";
+import QuizGenerator from "../pages/QuizGenerator";
 
 export const router = createBrowserRouter([
   { path: "/", element: <Home /> },
@@ -21,7 +19,6 @@ export const router = createBrowserRouter([
   { path: "/evaluate", element: <AnswerEvaluator /> },
   { path: "/notes", element: <Notes /> },
   { path: "/quiz", element: <QuizGenerator /> },
-  { path: "/voice", element: <VoiceChat_5 /> },
   { path: "/analytics", element: <LearningAnalytics /> },
   { path: "/goals", element: <GoalTracking /> },
 ]);

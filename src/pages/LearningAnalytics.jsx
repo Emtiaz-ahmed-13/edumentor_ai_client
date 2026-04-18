@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell, RadialBarChart, RadialBar, Legend } from 'recharts';
 import { Clock, Activity, Target, Timer, Maximize2, History, Trophy } from 'lucide-react';
 
-const API_BASE = "http://localhost:9525/api/v1";
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api/v1";
 
 const COLORS = ['#3b82f6', '#8b5cf6', '#ec4899', '#10b981', '#f59e0b'];
 
