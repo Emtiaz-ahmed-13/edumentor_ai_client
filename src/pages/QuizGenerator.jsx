@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Brain, CheckCircle2, Loader2, XCircle } from "lucide-react";
 import aiService from "../api/ai.service";
+import quizService from "../api/quiz.service";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import { Button } from "../components/ui/button";
@@ -50,15 +51,31 @@ export default function QuizGenerator() {
     setAnswers({ ...answers, [qIndex]: option });
   };
 
-  const handleSubmitQuiz = () => {
+  const handleSubmitQuiz = async () => {
     let currentScore = 0;
-    quizData.forEach((q, index) => {
+    quizData.questions.forEach((q, index) => {
       if (answers[index] === q.correctAnswer) {
         currentScore += 1;
       }
     });
+    
     setScore(currentScore);
     setIsSubmitted(true);
+
+    // Feature 11 & 15: Save result to backend for analytics
+    try {
+      await quizService.submitQuiz({
+        quizId: quizData._id,
+        subject: quizData.subject,
+        score: currentScore,
+        totalQuestions: quizData.questions.length,
+        difficulty: difficulty,
+        topics: [quizData.topic]
+      });
+      console.log("Quiz result synced with analytics engine.");
+    } catch (error) {
+      console.error("Failed to sync quiz result:", error);
+    }
   };
 
   return (
@@ -188,7 +205,7 @@ export default function QuizGenerator() {
                 </Card>
               )}
 
-              {quizData.map((q, index) => (
+              {quizData.questions.map((q, index) => (
                 <Card key={index} className={`shadow-md ${isSubmitted && answers[index] === q.correctAnswer ? "border-green-500/50" : isSubmitted && answers[index] !== q.correctAnswer ? "border-red-500/50" : ""}`}>
                   <CardHeader>
                     <CardTitle className="text-xl leading-relaxed">

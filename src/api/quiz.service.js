@@ -5,14 +5,11 @@ const api = axios.create({
   timeout: 90000,
 });
 
-// Fallback for analytical endpoints if different base URL is needed
-const ANALYTICAL_API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api/v1";
-
 const quizService = {
   // Feature 9: Generate quiz from topic or material text
   generateQuiz: async ({ topic, difficulty = 'intermediate', numQuestions = 10, sourceType = 'topic', material = '' }) => {
     try {
-      const response = await api.post('/quiz/generate', {
+      const response = await api.post('/quizzes/generate', {
         topic,
         difficulty,
         numQuestions,
@@ -29,7 +26,7 @@ const quizService = {
   // Feature 10: Evaluate a descriptive/short-answer response
   evaluateAnswer: async ({ question, correctAnswer, userAnswer, maxPoints = 10 }) => {
     try {
-      const response = await api.post('/quiz/evaluate-answer', {
+      const response = await api.post('/quizzes/evaluate-answer', {
         question,
         correctAnswer,
         userAnswer,
@@ -49,7 +46,7 @@ const quizService = {
       formData.append('pdf', file);
       formData.append('difficulty', difficulty);
       formData.append('numQuestions', String(numQuestions));
-      const response = await api.post('/quiz/generate-from-pdf', formData, {
+      const response = await api.post('/quizzes/generate-from-pdf', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
         timeout: 120000,
       });
@@ -63,7 +60,7 @@ const quizService = {
   // Get quiz history
   getHistory: async () => {
     try {
-      const response = await api.get('/quiz/history');
+      const response = await api.get('/quizzes/history');
       return response;
     } catch (error) {
       console.error('Quiz History Error:', error);
@@ -74,7 +71,7 @@ const quizService = {
   // Get a single saved quiz by ID
   getById: async (id) => {
     try {
-      const response = await api.get(`/quiz/${id}`);
+      const response = await api.get(`/quizzes/${id}`);
       return response;
     } catch (error) {
       console.error('Get Quiz Error:', error);
@@ -85,7 +82,7 @@ const quizService = {
   // Delete a quiz
   deleteQuiz: async (id) => {
     try {
-      const response = await api.delete(`/quiz/${id}`);
+      const response = await api.delete(`/quizzes/${id}`);
       return response;
     } catch (error) {
       console.error('Delete Quiz Error:', error);
@@ -93,19 +90,26 @@ const quizService = {
     }
   },
 
-  // Analytical functions from maisha branch
-  submitQuiz: async (data, token) => {
-    const response = await axios.post(`${ANALYTICAL_API_URL}/quizzes/submit`, data, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    return response.data;
+  // Feature 11 & 15: Submit quiz result to backend
+  submitQuiz: async (data) => {
+    try {
+      const response = await api.post('/quizzes/submit', data);
+      return response.data;
+    } catch (error) {
+      console.error('Quiz Submission Error:', error);
+      throw error;
+    }
   },
 
-  getWeakTopics: async (token) => {
-    const response = await axios.get(`${ANALYTICAL_API_URL}/quizzes/weak-topics`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    return response.data;
+  // Feature 11: Get subjects with low accuracy
+  getWeakTopics: async () => {
+    try {
+      const response = await api.get('/quizzes/weak-topics');
+      return response.data;
+    } catch (error) {
+      console.error('Weak Topics Error:', error);
+      throw error;
+    }
   },
 };
 
