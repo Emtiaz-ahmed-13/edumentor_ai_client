@@ -8,6 +8,9 @@ import Home from "../pages/Home";
 import Notes from "../pages/Notes";
 import QuizGenerator from "../pages/QuizGenerator";
 import VoiceChat_5 from "../components/VoiceChat_5";
+import LearningAnalytics from "../pages/LearningAnalytics";
+import GoalTracking from "../pages/GoalTracking";
+import DocumentQA from "../pages/DocumentQA";
 
 export const router = createBrowserRouter([
   { path: "/", element: <Home /> },
@@ -19,5 +22,6 @@ export const router = createBrowserRouter([
   { path: "/notes", element: <Notes /> },
   { path: "/quiz", element: <QuizGenerator /> },
   { path: "/voice", element: <VoiceChat_5 /> },
-  { path: "/voice-chat", element: <VoiceChat_5 /> },
+  { path: "/analytics", element: <LearningAnalytics /> },
+  { path: "/goals", element: <GoalTracking /> },
 ]);
