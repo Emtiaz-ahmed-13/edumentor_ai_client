@@ -28,6 +28,8 @@ export default function Navbar() {
     { name: "Ask AI", href: "/ask-ai", isInternal: true },
     { name: "Code Optimizer", href: "/code-ai", isInternal: true },
     { name: "Voice Assistant", href: "/voice", isInternal: true },
+    { name: "Quiz Generator", href: "/quiz", isInternal: true },
+    { name: "Answer Evaluator", href: "/evaluate", isInternal: true },
     { name: "Features", href: "#features" },
     { name: "How it Works", href: "#how-it-works" },
     { name: "Pricing", href: "#pricing" },
