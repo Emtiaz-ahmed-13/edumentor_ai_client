@@ -105,7 +105,7 @@ export default function SkillGapDetection() {
   }
 
   // Calculate global average
-  const globalAccuracy = data?.performanceData?.length > 0 
+  const globalAccuracy = (data?.performanceData && data.performanceData.length > 0)
     ? Math.round(data.performanceData.reduce((acc, curr) => acc + curr.accuracy, 0) / data.performanceData.length)
     : 0;
 
@@ -136,7 +136,22 @@ export default function SkillGapDetection() {
           </button>
         </div>
 
-        {data?.totalQuizzes === 0 ? (
+        {error ? (
+          <div className="bg-rose-50 dark:bg-rose-500/5 rounded-[3rem] border border-rose-100 dark:border-rose-500/10 p-20 text-center shadow-xl">
+             <AlertTriangle className="w-16 h-16 text-rose-500 mx-auto mb-8" />
+             <h2 className="text-2xl font-black tracking-tight mb-2 text-rose-900 dark:text-rose-400">Analysis Error</h2>
+             <p className="text-zinc-500 text-sm font-medium mb-8 max-w-sm mx-auto">
+               {error}
+             </p>
+             <button 
+                onClick={fetchData}
+                className="inline-flex items-center gap-3 px-8 py-4 bg-rose-500 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-rose-600 transition-all"
+             >
+                Try Re-analyzing
+                <RefreshCw className="w-4 h-4" />
+             </button>
+          </div>
+        ) : !data || data.totalQuizzes === 0 ? (
           <div className="bg-white dark:bg-zinc-900 rounded-[3rem] border border-zinc-200 dark:border-zinc-800 p-20 text-center shadow-xl shadow-zinc-200/50 relative overflow-hidden">
              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 bg-primary/5 blur-[100px] rounded-full" />
              <Target className="w-16 h-16 text-zinc-200 mx-auto mb-8 relative z-10" />
@@ -157,7 +172,7 @@ export default function SkillGapDetection() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <StatCard 
                 title="Total Assessments" 
-                value={data.totalQuizzes} 
+                value={data?.totalQuizzes || 0} 
                 icon={<PieChart className="w-5 h-5" />}
                 color="from-blue-500 to-indigo-500"
               />
@@ -170,7 +185,7 @@ export default function SkillGapDetection() {
               />
               <StatCard 
                 title="Weak Subjects" 
-                value={data.weakTopics.length} 
+                value={data?.weakTopics?.length || 0} 
                 icon={<AlertTriangle className="w-5 h-5" />}
                 color="from-rose-500 to-pink-500"
               />
@@ -196,7 +211,7 @@ export default function SkillGapDetection() {
                 </div>
 
                 <div className="space-y-8">
-                  {data.performanceData.sort((a, b) => b.accuracy - a.accuracy).map((item, idx) => (
+                  {data?.performanceData?.sort((a, b) => b.accuracy - a.accuracy).map((item, idx) => (
                     <SubjectProgressBar 
                       key={idx}
                       subject={item.subject}
