@@ -5,6 +5,9 @@ const api = axios.create({
   timeout: 90000,
 });
 
+// Fallback for analytical endpoints if different base URL is needed
+const ANALYTICAL_API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api/v1";
+
 const quizService = {
   // Feature 9: Generate quiz from topic or material text
   generateQuiz: async ({ topic, difficulty = 'intermediate', numQuestions = 10, sourceType = 'topic', material = '' }) => {
@@ -88,6 +91,21 @@ const quizService = {
       console.error('Delete Quiz Error:', error);
       throw error;
     }
+  },
+
+  // Analytical functions from maisha branch
+  submitQuiz: async (data, token) => {
+    const response = await axios.post(`${ANALYTICAL_API_URL}/quizzes/submit`, data, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data;
+  },
+
+  getWeakTopics: async (token) => {
+    const response = await axios.get(`${ANALYTICAL_API_URL}/quizzes/weak-topics`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data;
   },
 };
 

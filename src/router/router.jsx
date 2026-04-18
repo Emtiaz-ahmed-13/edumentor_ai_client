@@ -9,6 +9,8 @@ import Notes from "../pages/Notes";
 import GoalTracking from "../pages/GoalTracking";
 import LearningAnalytics from "../pages/LearningAnalytics";
 import QuizGenerator from "../pages/QuizGenerator";
+import SkillGapDetection from "../pages/SkillGapDetection";
+import StudyModes from "../pages/StudyModes";
 
 export const router = createBrowserRouter([
   { path: "/", element: <Home /> },
@@ -21,4 +23,6 @@ export const router = createBrowserRouter([
   { path: "/quiz", element: <QuizGenerator /> },
   { path: "/analytics", element: <LearningAnalytics /> },
   { path: "/goals", element: <GoalTracking /> },
+  { path: "/skill-gap", element: <SkillGapDetection /> },
+  { path: "/study-modes", element: <StudyModes /> },
 ]);
