@@ -10,7 +10,8 @@ import QuizGenerator from "../pages/QuizGenerator";
 import VoiceChat_5 from "../components/VoiceChat_5";
 import LearningAnalytics from "../pages/LearningAnalytics";
 import GoalTracking from "../pages/GoalTracking";
-import DocumentQA from "../pages/DocumentQA";
+import SkillGapDetection from "../pages/SkillGapDetection";
+import StudyModes from "../pages/StudyModes";
 
 export const router = createBrowserRouter([
   { path: "/", element: <Home /> },
@@ -24,4 +25,6 @@ export const router = createBrowserRouter([
   { path: "/voice", element: <VoiceChat_5 /> },
   { path: "/analytics", element: <LearningAnalytics /> },
   { path: "/goals", element: <GoalTracking /> },
+  { path: "/skill-gap", element: <SkillGapDetection /> },
+  { path: "/study-modes", element: <StudyModes /> },
 ]);

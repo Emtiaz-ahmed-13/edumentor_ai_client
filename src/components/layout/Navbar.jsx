@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { Button } from "../ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
+import NotificationCenter from "./NotificationCenter";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -22,18 +23,18 @@ export default function Navbar() {
   }, []);
 
   const navLinks = [
-    { name: "Smart Study Notes", href: "/notes", isInternal: true },
-    { name: "AI Quiz", href: "/quiz", isInternal: true },
-    { name: "Voice Chat", href: "/voice-chat", isInternal: true },
+    { name: "Note Summarizer", href: "/notes", isInternal: true },
+    { name: "Document IQ", href: "/document-qa", isInternal: true },
+    { name: "Study Modes", href: "/study-modes", isInternal: true },
+    { name: "Skill Gap", href: "/skill-gap", isInternal: true },
+    { name: "Quiz Generator", href: "/quiz", isInternal: true },
+    { name: "Answer Evaluator", href: "/evaluate", isInternal: true },
     { name: "Concept Simplifier", href: "/concept-simplifier", isInternal: true },
     { name: "Ask AI", href: "/ask-ai", isInternal: true },
     { name: "Code Optimizer", href: "/code-ai", isInternal: true },
     { name: "Voice Assistant", href: "/voice", isInternal: true },
-    { name: "Quiz Generator", href: "/quiz", isInternal: true },
-    { name: "Answer Evaluator", href: "/evaluate", isInternal: true },
     { name: "Features", href: "#features" },
     { name: "How it Works", href: "#how-it-works" },
-    { name: "Pricing", href: "#pricing" },
   ];
 
   return (
@@ -63,7 +64,7 @@ export default function Navbar() {
                 <Link
                   key={link.name}
                   to={link.href}
-                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                  className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors"
                 >
                   {link.name}
                 </Link>
@@ -71,7 +72,7 @@ export default function Navbar() {
                 <a
                   key={link.name}
                   href={link.href}
-                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                  className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors"
                 >
                   {link.name}
                 </a>
@@ -79,15 +80,8 @@ export default function Navbar() {
             ))}
           </div>
           <div className="flex items-center gap-4">
-            <SignedOut>
-              <SignInButton mode="modal">
-                <Button variant="ghost">Log in</Button>
-              </SignInButton>
-              <SignInButton mode="modal">
-                <Button>Get Started</Button>
-              </SignInButton>
-            </SignedOut>
             <SignedIn>
+              <NotificationCenter />
               <UserButton 
                 appearance={{
                   elements: {
@@ -96,6 +90,14 @@ export default function Navbar() {
                 }}
               />
             </SignedIn>
+            <SignedOut>
+              <SignInButton mode="modal">
+                <Button variant="ghost">Log in</Button>
+              </SignInButton>
+              <SignInButton mode="modal">
+                <Button>Get Started</Button>
+              </SignInButton>
+            </SignedOut>
           </div>
         </div>
 
@@ -139,15 +141,18 @@ export default function Navbar() {
                     </SignInButton>
                   </SignedOut>
                   <SignedIn>
-                    <div className="flex items-center gap-4">
-                      <UserButton 
-                        appearance={{
-                          elements: {
-                            userButtonAvatarBox: "w-10 h-10"
-                          }
-                        }}
-                      />
-                      <span className="text-sm font-medium">Your Profile</span>
+                    <div className="flex items-center justify-between gap-4 p-4 bg-zinc-50 dark:bg-zinc-800/50 rounded-2xl border border-zinc-100 dark:border-zinc-800">
+                      <div className="flex items-center gap-4">
+                        <UserButton 
+                          appearance={{
+                            elements: {
+                              userButtonAvatarBox: "w-10 h-10"
+                            }
+                          }}
+                        />
+                        <span className="text-sm font-black uppercase tracking-widest text-zinc-900 dark:text-white">Profile</span>
+                      </div>
+                      <NotificationCenter />
                     </div>
                   </SignedIn>
                 </div>
