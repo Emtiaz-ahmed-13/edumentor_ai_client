@@ -41,6 +41,30 @@ const aiService = {
       console.error('Code Analysis Error:', error);
       throw error;
     }
+  },
+
+  generateQuiz: async (topic, difficulty = 'intermediate', numQuestions = 5) => {
+    try {
+      const response = await api.post('/ai/generate-quiz', { topic, difficulty, numQuestions });
+      // QuizGenerator expects response.data.data to be the questions array directly
+      if (response.data?.data?.questions) {
+        response.data.data = response.data.data.questions;
+      }
+      return response;
+    } catch (error) {
+      console.error('Generate Quiz Error:', error);
+      throw error;
+    }
+  },
+
+  evaluateAnswer: async (question, userAnswer, correctAnswer = '', maxPoints = 10) => {
+    try {
+      const response = await api.post('/ai/evaluate-answer', { question, userAnswer, correctAnswer, maxPoints });
+      return response;
+    } catch (error) {
+      console.error('Evaluate Answer Error:', error);
+      throw error;
+    }
   }
 };
 

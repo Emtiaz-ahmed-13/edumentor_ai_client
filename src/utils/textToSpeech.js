@@ -1,24 +1,15 @@
-/**
- * Text-to-Speech utility
- *
- * Primary: ElevenLabs REST API (when VITE_ELEVENLABS_API_KEY + VITE_ELEVENLABS_VOICE_ID are set)
- * Fallback: browser Web Speech API (works with no configuration)
- */
+
 
 const ELEVENLABS_API_KEY = import.meta.env.VITE_ELEVENLABS_API_KEY;
 const VOICE_ID = import.meta.env.VITE_ELEVENLABS_VOICE_ID;
-
-// Consider ElevenLabs configured only when real values are present
 const isElevenLabsConfigured =
   ELEVENLABS_API_KEY &&
   ELEVENLABS_API_KEY !== "your_elevenlabs_api_key_here" &&
   VOICE_ID &&
   VOICE_ID !== "your_elevenlabs_voice_id_here";
-
-// Holds the current audio object (ElevenLabs path)
 let currentAudio = null;
 
-// ─── ElevenLabs path ────────────────────────────────────────────────────────
+
 
 async function speakWithElevenLabs(text) {
   stopSpeaking(); // cancel any current audio
@@ -71,8 +62,6 @@ async function speakWithElevenLabs(text) {
   }
 }
 
-// ─── Web Speech API fallback ─────────────────────────────────────────────────
-
 function speakWithWebSpeech(text) {
   return new Promise((resolve) => {
     if (!window.speechSynthesis) {
@@ -82,11 +71,10 @@ function speakWithWebSpeech(text) {
     
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
-    
-    // Attempt to select a good voice
+
     const voices = window.speechSynthesis.getVoices();
     if (voices.length > 0) {
-      // Prefer English voices, ideally natural sounding ones
+ 
       const preferredVoice = voices.find(v => v.lang.startsWith('en') && v.name.includes('Google')) || 
                            voices.find(v => v.lang.startsWith('en')) || 
                            voices[0];
@@ -97,7 +85,7 @@ function speakWithWebSpeech(text) {
     utterance.pitch = 1;
     
     utterance.onend = () => resolve();
-    utterance.onerror = () => resolve(); // Resolve even on error to unblock UI
+    utterance.onerror = () => resolve();
 
     window.speechSynthesis.speak(utterance);
   });
@@ -107,14 +95,6 @@ function stopWebSpeech() {
   window.speechSynthesis?.cancel();
 }
 
-// ─── Public API ──────────────────────────────────────────────────────────────
-
-/**
- * Speaks the given text.
- * Uses ElevenLabs when configured, otherwise the browser Web Speech API.
- * Falls back to Web Speech if ElevenLabs fails.
- * @param {string} text
- */
 export async function speakText(text) {
   if (!text) return;
 
@@ -126,21 +106,14 @@ export async function speakText(text) {
       console.warn("ElevenLabs failed, falling back to Web Speech:", error);
     }
   }
-
-  // Fallback or if not configured
   await speakWithWebSpeech(text);
 }
 
-/**
- * Stops any currently playing speech.
- */
 export function stopSpeaking() {
-  // ElevenLabs audio
   if (currentAudio) {
     currentAudio.pause();
     currentAudio.currentTime = 0;
     currentAudio = null;
   }
-  // Web Speech API
   stopWebSpeech();
 }
