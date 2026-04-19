@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Target, PlusCircle, PlayCircle, PauseCircle, FileText, Clock, Flame, Sparkles, Zap, BrainCircuit, AlertCircle, Activity } from 'lucide-react';
+import { Activity, AlertCircle, BrainCircuit, FileText, Flame, PauseCircle, PlayCircle, PlusCircle, Sparkles, Target, Zap } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api/v1";
@@ -32,10 +32,6 @@ export default function GoalTracking() {
       console.error(err);
     }
   };
-
-  useEffect(() => {
-    fetchGoalsAndProductivity();
-  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -95,6 +91,26 @@ export default function GoalTracking() {
       }
     } catch (err) {
       console.error(err);
+    }
+    try {
+      const res = await fetch(`${API_BASE}/analytics`,{
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+            title: tempGoal.title, 
+            type: tempGoal.type, 
+            targetDuration: tempGoal.targetDuration 
+        })
+      })
+      const data = await res.json();
+      if (data.data) {
+        const enriched = { ...data.data, isPaused: false };
+        setGoals(prev => prev.map(g => g._id === placeholderTempId ? enriched : g));
+        fetchGoalsAndProductivity();
+      }
+      
+    } catch (error) {
+      console.log(error )
     }
   };
 
