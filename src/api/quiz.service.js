@@ -111,6 +111,16 @@ const quizService = {
       throw error;
     }
   },
+  // Get latest result for a quiz
+  getLatestResult: async (quizId) => {
+    try {
+      const response = await api.get(`/quizzes/result/${quizId}`);
+      return response;
+    } catch (error) {
+      console.error('Get Result Error:', error);
+      throw error;
+    }
+  },
 };
 
 export default quizService;

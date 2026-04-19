@@ -8,7 +8,7 @@ import Home from "../pages/Home";
 import Notes from "../pages/Notes";
 import GoalTracking from "../pages/GoalTracking";
 import LearningAnalytics from "../pages/LearningAnalytics";
-import QuizGenerator from "../pages/QuizGenerator";
+import Quiz from "../pages/Quiz";
 import SkillGapDetection from "../pages/SkillGapDetection";
 import StudyModes from "../pages/StudyModes";
 
@@ -20,7 +20,7 @@ export const router = createBrowserRouter([
   { path: "/document-qa", element: <DocumentQA /> },
   { path: "/evaluate", element: <AnswerEvaluator /> },
   { path: "/notes", element: <Notes /> },
-  { path: "/quiz", element: <QuizGenerator /> },
+  { path: "/quiz", element: <Quiz /> },
   { path: "/analytics", element: <LearningAnalytics /> },
   { path: "/goals", element: <GoalTracking /> },
   { path: "/skill-gap", element: <SkillGapDetection /> },

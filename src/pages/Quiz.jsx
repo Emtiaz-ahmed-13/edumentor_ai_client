@@ -762,10 +762,30 @@ export default function Quiz() {
   const handleLoadQuiz = async (id) => {
     try {
       const res = await quizService.getById(id);
-      setQuiz(res.data?.data);
-      setAnswers({});
-      setEvaluations({});
-      setSubmitted(false);
+      const quizData = res.data?.data;
+      setQuiz(quizData);
+      
+      // Attempt to load previous results
+      try {
+        const resultRes = await quizService.getLatestResult(id);
+        const latestResult = resultRes.data?.data;
+        
+        if (latestResult) {
+          setAnswers(latestResult.userAnswers || {});
+          setEvaluations(latestResult.evaluations || {});
+          setSubmitted(true);
+        } else {
+          setAnswers({});
+          setEvaluations({});
+          setSubmitted(false);
+        }
+      } catch (err) {
+        console.warn("Failed to load previous result:", err.message);
+        setAnswers({});
+        setEvaluations({});
+        setSubmitted(false);
+      }
+      
       setCurrentPage(0);
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch {
@@ -806,10 +826,38 @@ export default function Quiz() {
     }
   };
 
-  const handleSubmitQuiz = () => {
+  const handleSubmitQuiz = async () => {
     setSubmitted(true);
     setCurrentPage(0);
     window.scrollTo({ top: 0, behavior: "smooth" });
+
+    // Calculate score
+    let totalScore = 0;
+    quiz.questions.forEach((q, idx) => {
+      if (q.type === "mcq" || q.type === "true-false") {
+        if (answers[idx] === q.correctAnswer) {
+          totalScore += q.points || 10;
+        }
+      } else if (q.type === "short-answer") {
+        totalScore += evaluations[idx]?.score || 0;
+      }
+    });
+
+    // Send to backend
+    try {
+      await quizService.submitQuiz({
+        quizId: quiz._id,
+        subject: quiz.subject,
+        score: totalScore,
+        totalQuestions: quiz.totalQuestions,
+        difficulty: quiz.difficulty,
+        topics: [quiz.topic],
+        userAnswers: answers,
+        evaluations: evaluations
+      });
+    } catch (err) {
+      console.error("Failed to submit results permanently:", err.message);
+    }
   };
 
   const handleReset = () => {
@@ -1050,3 +1098,4 @@ export default function Quiz() {
     </div>
   );
 }
+
