@@ -32,6 +32,7 @@ export default function GoalTracking() {
       console.error(err);
     }
   };
+  
 
   useEffect(() => {
     const interval = setInterval(() => {
